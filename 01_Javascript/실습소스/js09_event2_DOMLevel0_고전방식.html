@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+</head>
+<body> 
+   
+<button id="xxx">OK</button><br>
+
+<select id="yyy">
+  <option>A1</option>
+  <option>A2</option>
+  <option>A3</option>
+</select><br>
+
+<script>
+   function ok_click(){
+    console.log("ok_click");
+   }
+
+   //고전 방식: html태그 접근하고 이벤트 설정
+   var btn = document.querySelector("#xxx");
+   console.log(btn);
+   btn.onclick=ok_click;  // 콜백함수로 처리
+
+   document.querySelector("#yyy").onclick=ok_click; // 콜백함수로 처리
+
+</script>
+
+</body>
+</html>

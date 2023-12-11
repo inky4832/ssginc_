@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+</head>
+<body> 
+   
+<button id="xxx">OK</button><br>
+
+<script>
+   function ok_click(){
+    console.log("ok_click");
+   }
+   // DOM Level 2 방식
+   var btn = document.querySelector("#xxx");
+   btn.addEventListener("click",ok_click, false); // 콜백으로 처리 , jQuery 이벤트와 유사
+
+</script>
+
+</body>
+</html>
