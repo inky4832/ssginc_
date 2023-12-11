@@ -29,7 +29,8 @@
             반드시 마지막 파라미터에만 사용 가능
          5) 중요: 함수는 데이터이다.
                   - 함수를 변수에 저장가능
-      
+                  - 함수를 다른 함수호출시 인자값으로 전달 가능
+                  - 함수 호출시 리턴값으로 함수를 반환 가능.
          */
        // 함수 선언식1: 파라미터 없고 리턴값 없는 함수
        function fun(){
@@ -67,6 +68,25 @@
        console.log(x);
        var y = x;
        console.log(y);
+
+       //  2) 함수를 다른 함수호출시 인자값으로 전달 가능
+       function k(){
+        console.log("k");
+       }
+       function k2(n){
+        console.log("k2", n);
+        n(); // k함수 호출
+       }
+       k2(k);
+
+       // 3) 함수 호출시 리턴값으로 함수를 반환 가능.
+       function k3(){
+        console.log("k3");
+         return k;  // k함수 리턴
+       }
+
+       var xxx = k3();
+       xxx(); //  k함수 호출
     </script>
 </head>
 <body>
