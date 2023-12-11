@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        //1. var 
+        /*
+          - 데이터 타입 지정 안함
+          - 중복 가능
+          - 함수 스코프
+        */
+         var n=10; 
+         var n = "AaA";
+         console.log(n);
+
+         if(true){
+            var n2 = 100;
+         }
+         console.log(n2);
+
+
+        //2. let
+         /*
+          - ES6 추가
+          - 데이터 타입 지정 안함
+          - 중복 불가능
+          - 블록 스코프
+        */
+         let m = 20;
+         //let m = "AaA";
+         console.log(m);
+        if(true){
+            let m2 = 100;
+         }
+         console.log(m2);
+
+
+    </script>
+</head>
+<body>
+
+
+</script>
+</body>
+</html>
