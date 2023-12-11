@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+      /*
+        JS 함수
+
+        1) 함수 선언식( 이름 있는 함수)
+         문법: function 함수명([파라미터,..]){
+                 문장
+                 [return 값;]
+            }
+
+        2) 함수 표현식 ( 익명 함수:이름없는 함수)
+          문법: function([파라미터,..]){
+                 문장
+                 [return 값;]
+            }
+         ///////////////////////////
+         함수 특징
+         1) 반드시 호출해야 된다.  
+         2) 파라미터와 인자(전달값) 갯수가 달라도 된다.
+         3) function fun2(n,n2=100) 처럼 초기값 설정 가능 ==> default 파라미터
+         4) function fun(...n) 처럼 인자값을 배열로 뭉쳐서  전달 가능 ==> Rest 파라미터   
+            반드시 마지막 파라미터에만 사용 가능
+         5) 중요: 함수는 데이터이다. ==> 일급객체(first-class)라고 부른다.
+                  - 함수를 변수에 저장가능
+                  - 함수를 다른 함수호출시 인자값으로 전달 가능
+                  - 함수 호출시 리턴값으로 함수를 반환 가능.
+
+         6) 주의할점
+            - 함수명으로 변수명 사용불가
+         */
+       // 함수 선언식1: 파라미터 없고 리턴값 없는 함수
+       function fun(){
+          console.log("fun");
+       }
+       fun(); // 함수호출
+    // 함수 선언식2: 파라미터 있고 리턴값 없는 함수
+      function fun2(n,n2=100, ...n3){
+          console.log("fun2",n, n2);
+       }
+       fun2(10,20); // 함수호출
+       fun2(); // 에러 아님.
+       fun2(100,200,300,400);
+
+     // 함수 선언식3: 파라미터 없고 리턴값 있는 함수
+     function fun3(){
+          console.log("fun3");
+          return 100;
+       }
+      var result =  fun3();
+      console.log("result:", result);
+
+    // 함수 선언식4: 파라미터 있고 리턴값 있는 함수
+     function fun4(n, n2){
+          console.log("fun4", n, n2);
+          return n+n2;
+       }
+      var result =  fun4(5,4);
+      console.log("result:", result);
+     //////////////////////////////////////////////////////
+       // 1) 함수를 변수에 저장
+       function x(){
+        console.log("x");
+       }
+       console.log(x);
+       var y = x;
+       console.log(y);
+
+       //  2) 함수를 다른 함수호출시 인자값으로 전달 가능
+       function k(){
+        console.log("k");
+       }
+       function k2(n){
+        console.log("k2", n);
+        n(); // k함수 호출
+       }
+       k2(k);
+
+       // 3) 함수 호출시 리턴값으로 함수를 반환 가능.
+       function k3(){
+        console.log("k3");
+         return k;  // k함수 리턴
+       }
+
+       var xxx = k3();
+       xxx(); //  k함수 호출
+
+       //////////////////////////////////
+      //  함수명으로 변수명 사용불가
+      function fun(){
+        console.log("fun");
+       }
+       fun();
+
+       var fun = 10;
+       //fun();    not a function 에러발생
+
+    </script>
+</head>
+<body>
+
+</script>
+</body>
+</html>
