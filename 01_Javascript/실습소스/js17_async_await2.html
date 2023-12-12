@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        //async 비동기 함수
+        async function asyncFun(){
+           //오랜시간이 걸리는 작업
+           /*
+               async/await
+              - then 없이도 동작이 가능하다.
+              - 오랜시간이 걸리는 작업이 끝날때 까지 기다려준다.
+           */
+           var v = await new Promise(function(resolve,reject){
+               setTimeout(function(){
+                 console.log("비동기 작업");
+                 resolve(100);
+               },2000); 
+           });
+           // await new Promise 인 경우 v 값: 100
+           // new Promise 인 경우 v 값: Promise
+           console.log("v:", v);
+        }
+
+        asyncFun();
+
+        console.log("end");
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

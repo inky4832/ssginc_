@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+
+        //일반함수 함수
+        function normalFun(){
+            return "hello";
+        }
+
+        //async 비동기 함수
+        async function asyncFun(){
+            // 원래 오랜시간이 걸리는 작업코드 추가가능.
+            return "hello async";
+        }
+
+        var result1 = normalFun();
+        var result2 = asyncFun();
+
+        console.log("result1:", result1);
+        console.log("result2:", result2);  // Promise 객체
+
+        //result2는 Promise객체이기 때문에 then 함수호출 가능
+        result2.then(function(n){
+            console.log(n);
+        });
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

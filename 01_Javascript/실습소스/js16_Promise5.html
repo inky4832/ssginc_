@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        //비동기 처리 함수
+        function xxx(n){
+          return new Promise(function(resolve, reject){
+             console.log("1");
+             if(n=="ok"){
+                resolve(100);  // 성공
+             }else{
+                reject(">>>>fail");   // 실패
+             }
+             console.log("2");
+          });
+        }
+
+        var result = xxx("ok"); //  result 값이 Promise 객체이다. 
+        // 성공 또는 실패인 경우에 실제 처리 작업
+      //   result.then("resolve()함수호출시 수행되는함수",
+      //  "reject()함수호출시 수행되는함수");
+         result.then(function(x){
+             console.log("success1", x);
+             return x + 100;
+         }, function(){
+            console.log("fail1");
+         }).then(function(x2){
+             console.log("success2", x2);
+         }, function(){
+            console.log("fail2");
+         });
+
+        console.log("result:", result);
+        console.log("end");
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        //비동기 처리 함수
+        function xxx(){
+          return new Promise(function(resolve, reject){
+              console.log("1");
+          });
+        }
+
+        var result = xxx();
+        console.log("result:", result);
+        /*
+         [[Prototype]]: Promise
+         [[PromiseState]]:"pending"
+         [[PromiseResult]]:undefined
+        */
+        console.log("end");
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
