@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+     
+        function same_address(){
+           var chk = document.querySelector("#chk").checked;
+           if(chk){
+            document.querySelector("#address2").value 
+                = document.querySelector("#address1").value;
+           }else{
+            document.querySelector("#address2").value = "";
+           }
+        }
+       
+    </script>
+ 
+</head>
+<body>
+  회원주소<input type="text" name="address1" value="부산" id="address1"><br>
+  배송지와 동일하면 체크하시오
+  <input type="checkbox" onclick="same_address()" id="chk"><br>
+  배송지주소<input type="text" name="address2" id="address2">
+  
+
+</body>
+</html>

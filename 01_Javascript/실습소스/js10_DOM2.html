@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+     
+      function p_print(){
+          var p = document.getElementById("x");
+          console.log(p);
+          console.dir(p);
+          console.log(p.innerText);
+      }
+       
+    </script>
+ 
+</head>
+<body>
+  <p id="x">Hello</p>
+  <button onclick="p_print()">조회</button>
+
+</body>
+</html>

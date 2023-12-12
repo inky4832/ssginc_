@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+     
+      function p_print(){
+          var p = document.querySelector("#x");
+          console.log(p.innerHTML);
+
+          var p_list = document.querySelectorAll("p");
+          console.log(p_list); // NodeList(3)은 배열이다.
+          for(var p1 of p_list){
+            console.log(p1.innerHTML);
+          }
+      }
+       
+    </script>
+ 
+</head>
+<body>
+  <p id="x">Hello1</p>
+  <p id="x2">Hello2</p>
+  <p id="x3">Hello3</p>
+  <button onclick="p_print()">조회</button>
+
+</body>
+</html>

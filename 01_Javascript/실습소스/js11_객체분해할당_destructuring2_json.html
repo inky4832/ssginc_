@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+       
+         /*
+            객체 분해 할당 (es6)
+            1. 배열 
+
+            2. JSON 객체
+        
+        */
+         
+        // 가. 이전
+        var x = {k:100, k2:200};
+        // var k = x.k;
+        var k = x["k"]; // 연관배열
+        var z = "k";
+        var k = x[z];
+        var k2 = x.k2;
+        console.log(k, k2);
+
+
+         //나. 객체 분해 할당
+        var {k, k2} = {k:1000, k2:2000};
+        console.log(k, k2);
+         
+
+        var {k, k3=10} = {k:1000, k2:2000};
+        console.log(k, k3);
+
+        var k, k2;
+        ({k, k2} = {k:1000, k2:2000});
+        console.log(k, k2);
+
+        //변수명 변경
+        var a, b;
+        ({k:a, k2:b} = {k:1000, k2:2000});
+        console.log(a, b);
+    </script>
+</head>
+<body>
+  
+ 
+
+</body>
+</html>

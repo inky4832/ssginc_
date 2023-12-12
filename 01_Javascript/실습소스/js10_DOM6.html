@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+     
+         function total_sum(){
+             var price = document.querySelector("#price").value;
+             var quantity = document.querySelector("#quantity").value;
+             var sum = Number.parseInt(price) * Number.parseInt(quantity);
+             document.querySelector("#result").innerHTML = sum;
+
+         }
+       
+    </script>
+</head>
+<body>
+  가격:<input type="text" name="price" value="1000" id="price"><br>
+  수량:<select name="quantity" onchange="total_sum()" id="quantity">
+       <option value="5">5</option>
+       <option value="10">10</option>
+       <option value="15">15</option>
+  </select>
+  총합:<div id="result"></div>
+
+</body>
+</html>

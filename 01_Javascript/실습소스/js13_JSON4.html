@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+      
+      var xxx = "name";
+      const person = {
+        // 속성(property)
+        [xxx]:"홍길동", // 변수로 치환
+        age:20,
+        // 동작(메서드): 자바의 메서드처럼 
+        getAge(){ return this.age;},
+        getName(){ return this.name;}
+      };
+       
+      console.log(person);
+
+      //요소 접근
+      console.log(person.name, person["name"], person.getName());
+      console.log(person.age, person["age"], person.getAge());  
+       
+    </script>
+</head>
+<body>
+  
+ 
+
+</body>
+</html>
