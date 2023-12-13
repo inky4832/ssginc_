@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+       /*
+           // child filter 중요
+           - 지정된 선택자(selector)의 부모가 기준이 된다.
+        */
+
+        $(document).ready(function(){
+          
+            // 가. :button  => button 태그 반환 <button> <input type='button'>
+            var n = $(":button");
+            console.log(n);
+
+            // 나. input:checked ==> checkbox 중에서 checked 된 요소 반환
+            var n = $("input:checked");
+            console.log(n, n[0]);
+        });
+    </script>
+</head>
+<body>
+  <button>버튼1</button>
+  <form>
+  <button>버튼2</button>
+  <input type="text" name="aaa">
+  <input type="text" name="bbb" disabled="disabled">
+  <input type="checkbox" name="bbb" value="xxx" checked>
+  <input type="checkbox" name="ccc" value="xxx2" >
+  <select>
+   <option value="1">1</option>
+   <option value="2">2</option>
+   <option value="3">3</option>
+  </select>
+  </form>	
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+       /*
+           // child filter 중요
+           - 지정된 선택자(selector)의 부모가 기준이 된다.
+        */
+
+        $(document).ready(function(){
+          
+          // :contains(문자열) ==> 문자열을 포함하는 요소 반환. 대소문자 구별됨.
+          // $("div:contains('John')").css("color","red");
+          
+          // :has(선택자) ==> 지정된 선택자를 포함하는 요소 반환.
+          // $("div:has('p')").css("color","red");
+
+          // :empty ==> 자식이 없는 요소 반환.
+          //  $("td:empty").css("background-color","red");
+          
+          // :parent ==> 자식이 있는 요소 반환. :empty와 반대
+          $("td:parent").css("background-color","red"); 
+        });
+    </script>
+</head>
+<body>
+  <div>John Resig</div>
+  <div>George Martin</div>
+  <div>Malcom john Sinclair</div>
+  <div>
+    <p>HiJohn Resig</p>
+  </div>
+
+  <table border="1">
+    <tr><td>TD #0</td><td></td></tr>
+    <tr><td>TD #2</td><td></td></tr>
+    <tr><td></td><td>TD#5</td></tr>
+  </table>
+</body>
+</html>

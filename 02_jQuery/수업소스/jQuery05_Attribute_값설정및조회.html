@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+           1. text() ==>  innerText 와 동일, 조회할 때 사용
+              text(값) ==> innerText 와 동일, 설정할 때 사용
+           2. html()  ==>  innerHTML 와 동일, 조회할 때 사용
+              html(값) ==>  innerHTML 와 동일, 설정할 때 사용
+           3. val()   ==>  value 와 동일, 조회할 때 사용
+              val(값) ==>  value 와 동일, 설정할 때 사용
+           4. attr(속성명) ==> 속성값 접근 
+              attr(속성명, 속성값)  ==> 속성 추가/수정          
+        */
+
+        $(document).ready(function(){
+          
+           //jQuery 이벤트
+           $("#get").on('click',function(){
+               var text = $("p").text();
+               var html = $("p").html();
+               var addr1 = $("#addr1").val();
+               var a_href = $("a").attr("href");
+               console.log(text, html, addr1,a_href);
+           });
+          
+           $("#set").on('click',function(){
+
+             $("p").text("부산");
+             $("p").html("<h1>부산2</h1>");
+
+             var addr1 = $("#addr1").val();
+             $("#addr2").val(addr1);
+
+             $("a").attr("href","http://www.daum.net");
+
+             //속성제거
+             $("div").removeAttr('id');
+           });
+        });
+    </script>
+</head>
+<body>
+<button id="get">출력</button>
+<button id="set">설정</button>
+<hr>
+<p>Hello <em>world</em>!!!</p>
+주소:<input type="text" name="userid" id="addr1"><br>
+배송주소<input type="text" name="passwd" id="addr2"><br>
+<a href="http://www.google.com">link</a>
+<div id="result"></div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+          가. addClass("클래스1  클래스2") : 하나이상의 class 스타일 지정
+          나. removeClass("클래스1  클래스2") : 하나이상의 class 스타일 제거
+          다. toggleClass("클래스1  클래스2") : addClass와 removeClass가 번갈아 적용     
+          
+          라.  css(속성명, 속성값)
+               css({key:value, key:value})
+          */
+
+        $(document).ready(function(){
+          
+           // css 스타일 설정/제거
+           $("#large").on("click", function(){
+               $("p, h2").addClass("important  blue");
+           });
+
+           $("#normal").on("click", function(){
+              $("p").removeClass("important");
+           });
+           $("#toggle").on("click", function(){
+              $("p").toggleClass("important  blue");
+           });
+          
+
+        });
+    </script>
+</head>
+<body>
+   <h1>Heading</h1>
+   <h2>Heading2</h2>
+   <p>이것은 중요한 내용이다.</p>
+   <button id="large">크게보기</button><br>
+   <button id="normal">보통</button>
+   <hr>
+   <button id="toggle">toggle</button>
+   <hr/>
+</body>
+</html>
