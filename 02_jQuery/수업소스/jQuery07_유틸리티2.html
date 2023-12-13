@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+             유틸리티
+
+             가. $.each(배열, function(idx, data){});
+                 ==> 반복할 데이터는 배열이다.
+
+             나. $(selector).each(function(idx, data){});
+                 ==> 반복할 데이터는 1차 필터링된 selector이다.
+
+          
+          */
+
+        $(document).ready(function(){
+           // $(selector).each(function(idx, data){});
+           var sum = 0;
+           $("li").each(function(idx, data){
+               console.log(idx, data);
+              //  var n = data.innerHTML;
+               var n = $(data).text();
+               sum = sum + Number.parseInt(n);
+           });
+           $("#result").text(sum);
+        });
+    </script>
+</head>
+<body>
+  <ul>
+    <li>100</li>
+    <li>200</li>
+    <li>300</li>
+    <li>400</li>
+    <li>500</li>
+  </ul>
+  합계:<div id="result"></div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+            이벤트 3
+            - trigger 사용
+
+          */
+
+        $(document).ready(function(){
+          // ok2를 클릭했을 때 ok1 반응한다.
+          $("#ok").on("click", function(){
+             console.log("ok");
+          });
+          $("#ok2").on("click", function(){
+             //trigger 처리
+             $("#ok").trigger("click");
+            
+          });
+
+        });
+    </script>
+</head>
+<body>
+  <button id="ok">OK</button><br>
+  <button id="ok2">OK2</button><br>
+</body>
+</html>

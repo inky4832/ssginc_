@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+            이벤트 2
+            - 동적으로 생성된 DOM 이벤트 처리 방벚
+            - 문법:
+              $("body").on("이벤트타입","동적DOM정보", function{});
+          */
+
+        $(document).ready(function(){
+            
+          $("#ok").on("click", function(){
+             $("div").html("<button id='xxx'>new</button>");
+          });
+
+          //동적으로 생성된 이벤트 설정
+          $("body").on("click", "#xxx",function(){
+             console.log("new");
+          });
+
+
+        });
+    </script>
+</head>
+<body>
+  <button id="ok">OK</button><br>
+  <div></div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+             유틸리티
+            가. $.each(배열, function(idx, data){})
+               ==> 단순반복 처리
+               ==> return 조건식;  조건이 false면 중단
+
+            나. $.grep(배열, function(data, idx){ return 값;});
+               ==> 필터링 처리   
+
+            다. $.map(배열, function(data, idx){ return 값;});
+               ==> 가공 처리  
+          */
+
+        $(document).ready(function(){
+          
+      var months = [ 'January', 'February', 'March', 'April', 'May',
+			'June', 'July', 'August', 'September', 'October',
+			'November', 'December' ];
+          
+
+            //가. $.each(배열, function(idx, data){})
+            $.each(months, function(idx, data){
+               // console.log(idx, data);
+            });
+
+            $.each(months, function(idx, data){
+                console.log(idx, data);
+                return data != 'March';  // return false 면 중단처리.
+            });
+
+            //나. $.grep(배열, function(data, idx){ return 값;});
+            var result = $.grep(months, function(data,idx){
+              //조건은 5글자 이상 월 반환
+                return data.length >= 5;
+            });
+            console.log(result);
+
+
+            //다. $.map(배열, function(data, idx){ return 값;});
+            var result = $.map(months,function(data,idx){
+                return data.substr(0,3);
+            });
+            console.log(result);
+
+        });
+    </script>
+</head>
+<body>
+   
+</body>
+</html>

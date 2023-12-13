@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       .important{
+          font-size: xx-large;
+          font-weight: bold;
+       }
+       .blue{
+         color:blue;
+       }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        /*
+            이벤트
+            1. 처리 방법 1
+               - 이벤트 타입(click,change)에 해당하는 메서드
+               예> $("button").click(function(){});
+                   $("input").keyup(function(){});
+               - 이 API deprecated 됨.
+               - 하나의 이벤트만 설정 가능.
+
+            2. 처리 방법 2 ( 권장 )
+               - .on("이벤트타입", function(){});
+                 예> $("button").on("click  mouseover",function(){});
+                     $("input").on("keyup",function(){});
+
+              - 한번에 여러 이벤트 설정 가능
+          */
+
+        $(document).ready(function(){
+               //1. 처리 방법 1 (deprecated 됨 )
+              //  $("#ok").click(function(){
+              //      console.log("ok");
+              //  });
+
+              //2. 처리 방법 2 ( 권장 )
+              //- .on("이벤트타입", function(){});
+               $("#ok").on("click mouseover", function(){
+                 console.log("ok", event);
+                 console.log(this, $(this), $(this).text());
+               });
+
+               // form 의 submit 이벤트
+               $("form").on("submit",function(){
+                   var userid = $("#userid").val();
+                   if(userid.length==0){
+                       alert("아이디는 필수");
+                       event.preventDefault();
+                       $("#userid").focus();
+                   }
+               });
+
+        });
+    </script>
+</head>
+<body>
+  <button id="ok">OK</button><br>
+
+  text:<input type="text" id="txtInput" /> <br>
+  <button id="hover">hover</button><br>
+  <form action="http://www.google.com">
+  아이디<input type="text" name="userid" id="userid"><br>
+  비밀번호<input type="text" name="passwd"><br>
+  <select name="fruit">
+   <option value="사과">사과</option>
+   <option value="바나나">바나나</option>
+   <option value="수박">수박</option>
+  </select><br>
+   사과<input type="checkbox" name="checkbox" id="checkbox" checked>
+  <input type="submit" value="전송">
+  </form>
+</body>
+</html>
