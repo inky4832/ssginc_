@@ -160,7 +160,7 @@
 <button id="replaceWith">replaceWith</button><br>
 <button id="remove">remove</button><br>
 <button id="empty">empty</button><br>
-<hr/>s
+<hr/>
 
 
 # 6. 유틸리티 1
