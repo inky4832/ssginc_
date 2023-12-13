@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+       /*
+         
+        */
+
+        $(document).ready(function(){
+            // 모든 태그 선택
+            // $("*").css("color","red");
+            //특정 태그
+            // $("a").css("color","red");
+            // $("a,span").css("color","red");
+            // id 선택: 모든 태그의 unique값 지정
+            // $("#x").css("color","red");
+            // class 선택: 중복값 지정 가능
+            // $(".y").css("color","red");
+            // 속성 선택: [속성명], [속성명='값']
+            // $("[href]").css("color","red");
+            // $("[href='https://daum.net']").css("color","red");
+
+            // 속성 선택: [속성명 ^='시작값'],  [속성명 $='끝값']
+            // $("[href^='https']").css("color","red");
+            // $("[href$='com']").css("color","red");
+
+            // 자식 선택: > 이용
+            //  $("div > a").css("color","red");
+
+            // 자손 선택: 공백 이용
+            // $("div  a").css("color","red");
+
+            // 바로 다음 형제: + 이용
+            //  $("p+a").css("color","red");
+
+            //  모든 형제: ~ 이용
+             $("p~a").css("color","red");
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <p class="y">셀렉터</p>
+        <a href="http://naver.com" class="y">naver</a><br/>
+        <a href="https://daum.net" class="y">daum</a><br/>
+        <a href="https://google.com" class="z">google</a><br/>
+        <p>
+          <a href="#" id="x">자손</a>
+        </p>
+        <p>
+          <span><a href="xxx">자손2</a></span>
+        </p>
+        <span>Hello</span>
+    </div>
+</body>
+</html>
