@@ -2,6 +2,7 @@ package exam03;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -48,7 +49,10 @@ public class SelectMybatisTest {
 	       ==> 테이블의 하나의 레코드 저장용
 	      ==> MyBatis는 자동으로 DeptDTO에 저장해준다.
 	                       필요시 List에 누적도 가능하다.
-	      
+	        *****주의할점은 반드시 select 문장의 컬럼헤더값과
+	        DTO 의  변수명과 일치해야 된다. (원래는 setter 메서드명과 일치)
+	                   만약 일치 안되면 별칭으로 해결한다.
+	        
 	      5. Configuration.xml 불러오기
 	     	
 	     	==> 최종적으로 SqlSessionFactory 리턴한다.
@@ -58,9 +62,11 @@ public class SelectMybatisTest {
 	        
 	      7. SqlSession의 메서드를 이용해서 Mapper의 태그 호출
 	                    가. select 문
-	          List<DeptDTO> list =  session.selectList("id값");
+	          List<DeptDTO> list =  session.selectList("namespace.id값");
+	          List<DeptDTO> list =  session.selectList("namespace.id값", 값); 
 	           
-	          DeptDTO dto = session.selectOne("id값");
+	           
+	          DeptDTO dto = session.selectOne("namespace.id값");
 	          
 	      8. SqlSession 닫기
 	         session.close();
@@ -80,8 +86,45 @@ public class SelectMybatisTest {
 		SqlSession session = sqlSessionFactory.openSession();
 		
 		//전체 목록 보기
-		List<DeptDTO> list = session.selectList("findAll");
+		List<DeptDTO> list = session.selectList("exam03.DeptMapper2.findAll");
 		for (DeptDTO dto : list) {
+			System.out.println(dto);
+		}
+		System.out.println("#########################");
+		List<DeptDTO> list2 = session.selectList("findAllOrder");
+		for (DeptDTO dto : list2) {
+			System.out.println(dto);
+		}
+		System.out.println("#########################");
+		//조건지정 1
+		int search_deptno = 10;
+		List<DeptDTO> list3 = 
+				session.selectList("exam03.DeptMapper.findByDeptno", 
+						search_deptno);
+		for (DeptDTO dto : list3) {
+			System.out.println(dto);
+		}
+		System.out.println("#########################");
+		//조건지정 2
+		DeptDTO xxx = new DeptDTO();
+		xxx.setDname("개발");
+		xxx.setLoc("부산");
+		List<DeptDTO> list4 = 
+				session.selectList("exam03.DeptMapper.findByDnameAndLoc", 
+						xxx);
+		for (DeptDTO dto : list4) {
+			System.out.println(dto);
+		}
+		System.out.println("#########################");
+		//조건지정 3
+		HashMap<String, String> map=
+				new HashMap<String, String>();
+		map.put("xxx", "개발");
+		map.put("yyy", "부산");
+		List<DeptDTO> list5 = 
+				session.selectList("exam03.DeptMapper.findByDnameAndLocHashMap", 
+						map);
+		for (DeptDTO dto : list5) {
 			System.out.println(dto);
 		}
 		
