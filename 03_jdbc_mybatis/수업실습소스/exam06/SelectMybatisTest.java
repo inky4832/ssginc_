@@ -118,6 +118,30 @@ public class SelectMybatisTest {
 				 session.selectList("exam06.DeptMapper.multiSelect", list3);
 		 System.out.println(result);
 		 
+		 
+		 //4. 조건이 여러개
+		 /*
+		  * 
+		  *    select *
+		  *    from dept
+		  *    where deptno = 10
+		  *     또는
+		  *    where dname = '개발'
+		  *    
+		  * 
+		  */
+		  HashMap<String, Object> map = new HashMap<String, Object>();
+//		  map.put("searchName", "deptno");
+//		  map.put("searchValue", 10);
+		  
+//		  map.put("searchName", "dname");
+//		  map.put("searchValue", "개발");
+		 
+		  List<DeptDTO> list4 = 
+				  session.selectList("exam06.DeptMapper.multiChoose", map);
+		  System.out.println(list4);
+		 
+		 
 		 session.close();
 	}//end main
 

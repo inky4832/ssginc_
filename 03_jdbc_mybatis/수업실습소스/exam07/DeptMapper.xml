@@ -9,7 +9,21 @@
      from dept
   </select>
   
+  <insert id="save" parameterType="DeptDTO">
+    insert into dept ( deptno, dname, loc)
+    values ( #{deptno}, #{dname}, #{loc})
+  </insert>
   
+  <update id="update" parameterType="DeptDTO">
+    update dept
+    set dname= #{dname}, loc=#{loc}
+    where deptno=#{deptno}
+  </update>
+  
+  <delete id="remove" parameterType="int">
+    delete from dept
+     where deptno=#{deptno}
+  </delete>
 </mapper>
 
 
