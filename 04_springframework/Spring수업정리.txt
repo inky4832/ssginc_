@@ -172,7 +172,7 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 	   }
       c. 어노테이션 이용
          - JDK 11 지원 불가 ( JDK 8 지원됨 )
-
+         - 어노테이션 활성화 작업 필요: <context:annotation-config />
          - @PostConstruct
 	  pulic void xxx(){}
 	 - @PreDestroy
@@ -255,7 +255,135 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
       c. jsp에서 사용 가능
 
 
+7. 빈의 scope
+
+  - scope="prototype|singleton|request|session"
+
+   ==> request|session 는 웹 환경에서 사용
+       singleton 는 기본값이고 모든 빈을 하나만 생성해서 서비스됨.
+       prototype 은 빈을 매번 새로 생성해서 서비스됨.
 
 
+#########################################################
+최소한의xml + 어노테이션 기반 어플리케이션 개발
+==> 반드시 어노테이션을 활성화 작업이 필요.
+    	<!-- 어노테이션 활성화 -->
+	<context:annotation-config />
+
+1) @Autowired ( byType 방법 이용 )
+  - 기본적으로 일치하는 타입을 찾아서 자동으로 주입 ( <constructor-arg> 또는 <property> 지정안함 )
+  - 지정위치 3군데
+     a.변수 (권장)
+     b.생성자
+     c.set메서드
+
+   - 주입할 대상이 없으면 NoSuchDefinitionException  발생됨. ==> 필수적으로 주입해야 된다.
+     옵션으로 변경 가능 @Autowired(required=false)
+
+   - 주입할 대상이 2개 이상이면 NoUniqueBeanDefinitionException 발생됨.
+     a.명시적으로 지정 가능
+       @Autowired
+       @Qualifier(빈이름)
+
+     b. 주입할 빈의 이름(id)값과 변수명 일치
+
+        <bean id="yyy" class="com.dao.DeptDAO"></bean>
+
+	@Autowired
+	DeptDAO yyy;
 
 
+2) @Resource ( byName 방법 이용 )
+   - 기본적으로 일치하는 이름을 찾아서 자동으로 주입 ( <constructor-arg> 또는 <property> 지정안함 )
+   - javax.annotation.Resource 패키지가 필요.
+     <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
+	<dependency>
+	    <groupId>javax.annotation</groupId>
+	    <artifactId>javax.annotation-api</artifactId>
+	    <version>1.3.2</version>
+	</dependency>
+
+   -문법:
+       @Resource (name="빈이름(id)")
+  
+
+3) @Value 
+  - properties 파일에서 직접 빈의 변수에 주입해서 사용된다.
+
+   가. src/main/resource에 jdbc.properties 작성
+
+   나. xml에 jdbc.properties 파일 등록
+      <!-- jdbc.properties 등록 -->
+      <context:property-placeholder location="classpath:com/config/jdbc.properties"/>
+
+   다. 빈에서 직접 사용
+
+       @Value("${key}")
+       String driver;
+###########################################################
+AOP ( Aspect Oriented Programming : 관점 지향 프로그래밍 )
+
+1. 개요
+   - 코드의 필수기능과 부가기능을 분리해서 개발하자
+   -용어
+   가. target: 실제 필수기능 구현된 빈
+   나. aspect: 부가 기능 구현된 빈
+       -@Aspect 어노테이션 지정
+
+   다. joinpoint
+       - target에 aspect가 삽입(위빙:weaving)되는 시점
+       - 원천 기술 AOP: 다양한 시점에 위빙 가능 ( 예> 생성, 메서드 호출, 변수 변경,.... )
+       - Spring AOP: 메서드 호출만 지원
+
+   라. pointcut
+        - 어떤 메서드 호출했을 때 위빙할것인지를 지정
+	- 다양한 표현기술로 사용.
+
+   마. advice
+        - 5가지 advice 제공
+
+2. 설정
+
+  가. 의존성 추가
+    <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.21</version>
+</dependency>
+
+
+  나. 타겟 클래스 작성 ( 핵심기능이 구현된 빈 )
+     UserService.java
+            public String sayHello() {}
+
+  다. aspect 클래스 작성 ( 부가 기능 구현된 빈 )
+     UserServiceAspect.java
+
+
+     @Aspect
+    public class UserServiceAspect {
+
+
+  라. aspect 클래스에 pointcut 지정
+
+     @Pointcut("execution(메서드 정보 지정)" )
+     public void 임의메서드(){}
+
+  ==>  @Pointcut("execution(public String sayHello)" )
+        public void xxx(){}
+
+
+  마. 메서드 호출 전/후/정상종료/예외발생/모두 중에서 어느 시점에 위빙될지 결정 ( advice 라고 부른다. )
+
+     a. 핵심기능 메서드 호출전(before advice )에 실행됨.
+     
+       @Before("xxx()") // @Pointcut의 메서드 지정
+        public void method(){
+           // 실제 부가 기능 코드 구현
+	}
+
+  바. 핵심빈, 부가빈을 user.xml 등록
+
+  사. @Aspect 활성화
+     - <aop:aspectj-autoproxy />
