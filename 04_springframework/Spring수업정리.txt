@@ -177,3 +177,85 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 	  pulic void xxx(){}
 	 - @PreDestroy
 	  pulic void yyy(){}
+
+4. profile
+  - profile값에 따라서 개발환경을 다양하게 구축 가능.
+
+  - 구성
+   가. 개발환경
+       - user-dev.xml
+       - UserServiceDev.java
+
+   나. 배포환경
+       - user-prod.xml
+       - UserServiceProd.java
+
+
+               UserService (인터페이스)
+	           |
+    UserServiceDev    UserServiceProd
+
+    
+    설정방법:
+    	GenericXmlApplicationContext ctx = 
+				new GenericXmlApplicationContext();
+		
+	//profile 설정
+	ctx.getEnvironment().setActiveProfiles("prod");  //dev, prod
+	ctx.load("classpath:user-dev.xml", "classpath:user-prod.xml");
+	ctx.refresh();
+
+
+5. jdbc.properties에 설정된 환경설정값을 빈에 주입해서 사용하기
+
+   가. src/main/resource에 jdbc.properties 작성
+
+   나. xml에 jdbc.properties 파일 등록
+      <!-- jdbc.properties 등록 -->
+      <context:property-placeholder location="classpath:com/config/jdbc.properties"/>
+     
+   다. 빈에 주입
+      - ${key}
+
+
+6. I18N ( 국제화: InternationalizatioN )
+  https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#context-functionality-messagesource
+    가. 리소스번들 파일 작성
+      문법: 파일명_국가별언어코드.properties
+      src/main/resource에 저장
+      greeting_ko.properties
+      greeting_en.properties
+
+
+    나. 리소스번들 등록 ( 주의할 점은 id값은 반드시 messageSource 로 설정해야 된다. )
+   <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+     <property name="basename" value="classpath:com/config/greeting" />
+     <!--  properties 파일 인코딩을 utf-8로 지정한 경우 -->
+     <property name="defaultEncoding" value="utf-8" />
+   </bean>
+
+   
+    다. 사용
+
+      a. TestMain에서 사용 가능
+         	 MessageSource resources = 
+				 new ClassPathXmlApplicationContext("classpath:com/config/user.xml");
+		 String message = resources.getMessage("greet", new String[]{"홍길동","!!!"}, "Default", Locale.KOREA);
+		 System.out.println(message);
+
+      b. TestMain가 아닌 임의의 빈에서 사용 가능
+         public class UserService implements MessageSourceAware{
+	
+	MessageSource resources;
+
+	@Override
+	public void setMessageSource(MessageSource messageSource) {
+		this.resources = messageSource;
+	}
+      c. jsp에서 사용 가능
+
+
+
+
+
+
