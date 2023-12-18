@@ -90,7 +90,7 @@ http://spring.io
           기본형, 문자열 : value 속성
 	  클래스(참조형) : ref 속성
 ##################################################################
-
+https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#beans-collection-elements
 1. 1:n 의존성 주입 ==> Collection
 
   가. list
@@ -103,7 +103,53 @@ http://spring.io
      - HashMap
      - key/value 저장
      - key와 value 모두 object
+
   라. props
      - Properties
      - key/value 저장
      - key와 value 모두 String
+
+2. util 태그 이용 - Collection
+https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#appendix
+   반드시 util namespace 설정
+    가. list
+      <util:list id="xxx">
+		<ref bean="cat1" />
+		<ref bean="cat2" />
+		<ref bean="cat1" />
+	</util:list>
+
+    <bean id="service" class="com.service.UserService">
+      <property name="list" >
+        <ref bean="xxx"/>
+      </property>
+    </bean>
+
+    나. set
+     <!-- util -->
+	<util:set id="xxx">
+		<ref bean="cat1" />
+		<ref bean="cat2" />
+		<ref bean="cat1" />
+	</util:set>
+	<bean id="service" class="com.service.UserService">
+		<property name="set">
+		  <ref bean="xxx" />
+		</property>
+	</bean>
+
+    다. map
+    <util:map id="xxx">
+		<entry key="c1" value-ref="cat1" />
+		<entry key="c2">
+			<ref bean="cat2" />
+		</entry>
+	</util:map>
+
+	<bean id="service" class="com.service.UserService">
+		<property name="map">
+			<ref bean="xxx"/>
+		</property>
+	</bean>
+
+    라.props
