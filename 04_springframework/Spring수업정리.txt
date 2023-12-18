@@ -153,3 +153,27 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 	</bean>
 
     라.props
+
+
+
+3. 빈 생성 관련되는 콜백 메서드
+
+   가. 서블릿 
+      - init() 메서드
+      - doGet()/doPost() 메서드
+      - destory() 메서드
+
+   나. Spring
+      a. <bean id="" class=""  init-method="메서드명" destroy-method="메서드명" >
+      b. interface 이용
+
+         - implments InitializingBean, DisposalBean{
+	       // 추상메서드 재정의
+	   }
+      c. 어노테이션 이용
+         - JDK 11 지원 불가 ( JDK 8 지원됨 )
+
+         - @PostConstruct
+	  pulic void xxx(){}
+	 - @PreDestroy
+	  pulic void yyy(){}
