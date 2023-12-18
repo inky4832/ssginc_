@@ -1,0 +1,109 @@
+http://spring.io
+
+1. Spring 개발 2가지 방법
+
+  가. Spring Framework
+     
+      -XML 만 이용
+      -XML + 어노테이션(@, 자바) : 최소한의 xml 필요
+      -어노테이션(자바) : java Configuration
+
+   ==> 개발자가 명시적으로 의존성 설정, 빈 등록, 의존성 주입, 서버설정 등 다양한 작업을 지정.
+
+  나. SpringBoot
+      - auto configuration
+      - Spring Framework 어노테이션(자바) 기반
+
+
+2. 빌드 툴(build tool)
+
+  가. 개발 프로세스
+
+  주문 --> 분석 --> 설계 ---> 구현 --->테스트 --> 패키지 ---> 배포
+
+  나. 빌드 툴 
+    - 개발 프로세스 자동화
+    - 필요한 의존성 다운로드 설정기능
+    - 자동으로 컴파일
+    - 자동으로 테스트 ( 단위테스트 )
+    - 자동으로 패키지 (압축, jar, war )
+    - 자동으로 배포
+
+  다. 종류
+     - maven
+        pom.xml 설정파일
+
+     - gradle
+        build.gradle 설정파일
+
+
+3. Spring 특징
+
+  가. POJO 기반
+   - POJO ( Plain Old Java Object )
+   - 클래스 작성시 어떠한 interface 또는 class 상속/구현하지 않음.
+
+  나. 클래스
+   - 빈(bean) 이라고 부름.
+   - 직접 new 하지 않는다. ==> 외부에서 처리한다.
+     a. 빈을 xml에 등록
+         <bean id="" class="빈" />
+     b. ApplicationContext에 xml 설정
+       -ApplicationContext가 xml 정보를 보고 빈을 생성한다.
+
+     c. 빈 사용
+        - getBean("id값", 빈.class );
+
+
+  다. 제어의 역행 ( Inversion of Control : IoC )
+    - 빈을 생성 및 의존성 설정 작업을 직접하지 않고
+      외부에서 처리하는 개념.
+    - ApplicationContext가 IoC Container라고 한다.
+
+
+  라. IoC Container 계층 구조
+
+        BeanFactory   MessageSource
+	     |          |  
+	ApplicationContext ( 인터페이스 )
+             |  
+             |       
+          WebApplicationContext(*, 웹환경)		
+	  GenericXmlApplicationContext(*)
+	  ClassPathXmlApplicationContext
+	    ...
+
+
+   마. 의존성 주입 ( dependency Injection : DI )
+     - 외부에서 빈을 설정하는 개념
+
+     a. 생성자 이용
+        <bean>
+	  <constructor-arg   value="">
+          <constructor-arg   ref="">
+     b. setter 메서드 이용
+        <bean>
+	  <property value="">
+          <property ref="">
+
+      - 주입받은 대상
+          기본형, 문자열 : value 속성
+	  클래스(참조형) : ref 속성
+##################################################################
+
+1. 1:n 의존성 주입 ==> Collection
+
+  가. list
+     - ArrayList
+     - 순서있고 중복 가능
+  나. set
+     - HashSet
+     - 순서없고 중복 불가
+  다. map
+     - HashMap
+     - key/value 저장
+     - key와 value 모두 object
+  라. props
+     - Properties
+     - key/value 저장
+     - key와 value 모두 String
