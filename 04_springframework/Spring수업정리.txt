@@ -338,7 +338,7 @@ AOP ( Aspect Oriented Programming : 관점 지향 프로그래밍 )
    라. pointcut
         - 어떤 메서드 호출했을 때 위빙할것인지를 지정
 	- 다양한 표현기술로 사용.
-
+https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#aop-pointcuts-examples
    마. advice
         - 5가지 advice 제공
 
@@ -387,3 +387,29 @@ AOP ( Aspect Oriented Programming : 관점 지향 프로그래밍 )
 
   사. @Aspect 활성화
      - <aop:aspectj-autoproxy />
+########################################################
+1) 빈을 생성할때 XML 등록없이 사용하는 방법
+
+  가. 빈 생성
+  나. 최소한의 XML코드
+     - 빈이 정의된 패키지명을 알려준다.
+     <component-scan basepackage="패키지명" />
+
+    예> com.service.UserService.java
+
+      이전방식: user.xml
+         
+	    <bean id="service" class="com.service.UserService" />
+
+      scan방식: user.xml
+
+             <component-scan basepackage="com.service" />
+
+   다. 반드시 지정된 패키지안에 마킹(어노테이션)된 빈들만 생성된다.
+
+       - @Component
+       - @Service
+       - @Repository
+       - @Controller
+       - @RestController
+       - @Configuration
