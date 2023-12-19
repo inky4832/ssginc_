@@ -393,7 +393,8 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
   가. 빈 생성
   나. 최소한의 XML코드
      - 빈이 정의된 패키지명을 알려준다.
-     <component-scan basepackage="패키지명" />
+      <component-scan basepackage="패키지명" /> ==> 내부적으로 <context:annotation-config /> 포함된다.
+
 
     예> com.service.UserService.java
 
@@ -413,3 +414,144 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
        - @Controller
        - @RestController
        - @Configuration
+
+
+2) SpringFramework + Mybatis + Mysql
+
+  가. 의존성 설정
+     - mysql-connector.jar
+     - mybatis.jar
+
+     * 스프링에서 추가
+     - spring-jdbc.jar
+     - spring-mybatis.jar
+     - ConnectionPool 기능 (Apache 그룹에서 제공 )
+       commons-dbcp2.jar
+
+  나. jdbc.properties 작성
+        jdbc.driver=com.mysql.cj.jdbc.Driver
+	jdbc.url=jdbc:mysql://localhost:3306/testdb?characterEncoding=UTF8
+	jdbc.userid=root
+	jdbc.passwd=root1234
+ 
+  다. jdbc.properties 등록
+
+      <!-- 1. jdbc.properties 등록 -->
+    <context:property-placeholder location="classpath:com/config/jdbc.properties"/>
+
+  
+  라. Apache에서 제공해준 dbcp 등록 및 4가지 정보 설정
+
+        <!-- 2. DBCP 등록 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+    	<property name="driverClassName" value="${jdbc.driver}" />
+    	<property name="url" value="${jdbc.url}" />
+    	<property name="username" value="${jdbc.userid}" />
+    	<property name="password" value="${jdbc.passwd}" />
+    </bean>
+
+   마. com.dto.DeptDTO
+
+   바. com/config/DeptMapper.xml
+
+   사. 이전 Mybatis에서 사용했던 SqlSessionFactory 역할의 API를 얻는다.
+       스프링에서는 SqlSessionFactoryBean 이다.
+
+      <!-- 3. SqlSessionFactoryBean 얻기 -->
+    <bean id="" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<property name="dataSource" ref="xxx" />
+    	<property name="mapperLocations">
+    	 <list>
+    	   <value>classpath:com/config/DeptMapper.xml</value>
+    	 </list>
+    	</property>
+    	<property name="typeAliases">
+    	  <list>
+    	     <value>com.dto.DeptDTO</value>
+    	  </list>
+    	</property>
+    </bean>
+
+  아. 이전 Mybatis에서 사용했던 SqlSession 역할의 API를 얻는다.
+      스프링에서는 SqlSessionTemplate 이다.
+
+        <!-- 4.  SqlSessionTemplate 얻기 -->
+    <bean id="sessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sessionFactoryBean" />
+     </bean>
+
+
+   자. 빈생성 및 등록 (Component-scan)
+
+     MainTest.java ------> DeptService
+                           DeptServiceImpl  ----------> DeptDAO  ----------> MySQL
+
+    <context:component-scan base-package="com.*" />
+
+  
+   차. DeptDAO 에서 SqlSessionTemplate 주입 받음
+      ==> 과거에는 DeptServiceImpl에서 SqlSession 얻어서 DAO 전달하는 방식 실행되었음. 이유는 트랜잭션을 적용하기 위함이다.
+        @Repository
+	public class DeptDAO {
+
+	@Autowired
+	SqlSessionTemplate session; // 이전 MyBatis의 SqlSession 역할.
+	
+	public List<DeptDTO> findAll(){
+		return session.selectList("com.config.DeptMapper.findAll");
+	}
+
+   카. DML 처리
+     - 트랜잭션 처리
+
+       a. JDBC 버전 ( 기본적으로 auto commit )
+          - DeptServiceImpl에서 구현
+	  - 예>
+	       public void save(){
+                   Connection con = ~;
+		try{
+		con.setAutoCommit(false);
+		    //DML1
+		    //DML2
+		con.commit();  
+		}catch(Exception e){
+		con.rollback();
+	       }
+	b. MyBatis 버전 ( 기본적으로 auto commit 아님 )
+           - DeptServiceImpl에서 구현
+	   - 예>
+	       public void save(){
+                   SqlSession session = ~;
+		try{
+		    //DML1
+		    //DML2
+		  session.commit();  
+		}catch(Exception e){
+		  session.rollback();
+	       }
+
+
+	 c. Spring 버전
+	    - DeptServiceImpl에서 구현
+	    - 예>
+	
+	       @Transational // save() 메서드의 DML이 모두 성공하면 자동으로 commit되고 하나라도 실패(RuntimeException)하면 모두 rollback됨.
+	       public void save(){
+                    //DML1
+		    dao.insert();
+		    //DML2
+		    dao.update();
+	       }
+		 <!-- transaction 처리 -->
+		    <tx:annotation-driven transaction-manager="txManager"/> 
+
+		    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<!-- (this dependency is defined somewhere else) -->
+			<property name="dataSource" ref="xxx"/>
+		    </bean>
+		 <!-- transaction 처리 -->
+
+            *****************
+	    (1)@Autowired,@Value 등 -------------> <context:annotation-config />
+	    (2)@Aspect              -------------> <aop:aspectj-autoproxy />
+	    (3)@Transactional       -------------> <bean> 이용해서 TransactionManager 등록 ( SpringBoot에서는 자동등록됨 )
