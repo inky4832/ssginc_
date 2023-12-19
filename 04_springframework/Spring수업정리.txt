@@ -555,3 +555,104 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 	    (1)@Autowired,@Value 등 -------------> <context:annotation-config />
 	    (2)@Aspect              -------------> <aop:aspectj-autoproxy />
 	    (3)@Transactional       -------------> <bean> 이용해서 TransactionManager 등록 ( SpringBoot에서는 자동등록됨 )
+
+####################################################################
+서블릿 어플리케이션	
+    http://localhost:8090/컨텍스트명/자원(jsp,image,..)
+					            context명:web application명
+						     yyy     : xxx
+
+이클립스                                              Tomcat
+xxx (웹프로젝트)  ------------>배포(deploy path)         webapps
+-src                                                      - xxx (web application)
+-webContent                                                  -WEB-INF  
+   -WEB-INF                                                      -lib
+      -lib                                                       -web.xml  
+      -web.xml                                               -hello.jsp
+
+   -hello.jsp                                              - examples
+   -test.js                                                - managers
+   -test.css
+   -test.png
+
+서블릿 추가 및 서블릿 맵핑
+
+이클립스                                              
+xxx
+ src
+   - com.servlet.HelloServlet
+
+  * 서블릿 맵핑
+    가. 어노테이션 ( @WebServlet("/서블릿맵핑")
+
+    나. web.xml 이용 태그 이용
+
+        <serlvet>
+           <servlet-name>HelloServlet</servlet-name>
+	   <servlet-class>com.servlet.HelloServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+           <servlet-name>HelloServlet</servlet-name>
+	   <url-pattern>/서블릿맵핑</urlpattern>
+	</servlet-mapping>
+
+
+ 요청자원?
+ 가. 서블릿
+    http://localhost:8090/context명/서블릿맵핑명
+
+  서블릿초창지 요청방법: http://localhost:8090/context명/servlet/com.servlet.HelloServlet
+
+ 나. 비서블릿(jsp,html,css,js,image)
+    http://localhost:8090/context명/자원
+
+
+
+####################################################################
+Spring MVC
+
+1. 환경설정
+
+ 가. sts3
+ 나. tomcat 9
+   http://jakarta.apache.org
+
+ 다. sts에서 tomcat 사용하기 위한 설정
+
+2. sts에서 프로젝트 생성
+  - 3번쨰 지정하는 패키지이름이 컨테스트명으로 자동 설정된다.
+
+   예> com.test.app  ===========> app가 컨텍스트명이 된다.
+     http://localhost:8090/app 
+
+ 
+3. Spring MVC 프로젝트 구조
+
+    Spring16_MVC
+       src/main/java
+            *.java 저장
+
+       src/main/webapp
+                   -WEB-INF
+		        -classes
+			-spring
+			    - appServlet
+			           servlet-context.xml (스프링관련, 웹관 관련된 빈 설정 Controller, RestController, web.xml에서 등록)
+			    - root-context.xml(스프링관련, 무관한 빈 설정, DB연동 설정정보들, web.xml에서 등록)
+
+			 -views ( 웹 브라우저로 직접 접근 불가 )
+			    - jsp
+			    - image
+			    - js
+			    - css
+			 -web.xml
+
+4. Spring에서 서블릿 사용됨
+  - 자동제공됨( DispatcherServlet )
+  - web.xml 서블릿 맵핑 ( / )
+
+  서블릿 요청: http://localhost:8090/context명/서블릿맵핑명
+  
+  DispatcherServlet 요청: http://localhost:8090/app/
+
+
