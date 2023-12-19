@@ -1,3 +1,5 @@
+https://zoom.us/j/97053933816?pwd=SkFPUERBY0VOdnBrNm5ONGlBaFlqdz09
+
 # MySQL DB 연동 
 <dependency>
     <groupId>mysql</groupId>
