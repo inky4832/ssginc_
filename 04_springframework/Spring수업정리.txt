@@ -924,3 +924,83 @@ Spring MVC
 
 서블릿버전: action="서브릿맵핑값"
 Spring버전: action="요청맵핑값"
+
+
+  가.GET 방식 요청
+    - 한글처리가 자동으로 됨.
+    - method="get" 하면 Controller에서는 @GetMapping으로 처리해야 된다.
+      일치하지 않으면 405 에러발생
+
+  나. POST 방식 요청
+    - 한글이 깨짐.
+    - 한글처리 방법
+       a. 서블릿 버전
+         - 서블릿마다  request.setCharacterEncoding("utf-8"); 설정
+	 - 우리가 만든 Filter API 에서만 request.setCharacterEncoding("utf-8"); 설정
+
+       b. Spring 버전
+          - 인코딩하는 Filter 제공
+	  - web.xml에서 제공된 Filter 등록하면 된다.
+   
+        <filter>
+           <filter-name>filter</filter-name>
+	   <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	   <init-param>
+              <param-name>encoding</param-name>
+	      <param-value>utf-8</param-value>
+	   </init-param>
+	</filter>
+	<filter-mapping>
+           <filter-name>filter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping>
+     
+
+  
+    다. 사용자 입력 데이터 얻기
+     
+      a. 서블릿 방식처럼 HttpServletRequest 이용
+      @GetMapping("/login")
+	public String login(HttpServletRequest request) {
+		
+	String userid = request.getParameter("userid");
+	String passwd = request.getParameter("passwd");
+	System.out.println(userid+"\t"+passwd);
+       
+      b. @RequestParam 이용 ( 일반적인 방법 )
+      @GetMapping("/login4")
+	public String login4(@RequestParam String userid   ,
+			     @RequestParam String passwd ) {
+		System.out.println(userid+"\t"+userid);
+
+
+      c. DTO에 직접 저장
+      @GetMapping("/login")
+	public String login( LoginDTO dto ) {
+		System.out.println(dto);
+
+      d. Map에 저장
+       @GetMapping("/login")
+	public String login(@RequestParam Map<String, String> map) {
+		System.out.println(map);
+
+
+ 
+    라. 사용자 입력 데이터 얻기 - multi
+
+       서블릿버전:
+           String [] values = request.getParameterValues("email");
+
+
+       Spring 버전:
+        
+	    public class MemberDTO {
+
+		String userid;
+		String passwd;
+
+		//배열
+		//String [] email;  // name="email"	
+
+		//리스트
+		List<String> email; // name="email"
