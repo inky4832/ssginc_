@@ -656,3 +656,271 @@ Spring MVC
   DispatcherServlet 요청: http://localhost:8090/app/
 
 
+5. MVC 구조
+
+  가. 이전 서블릿/JSP의  MVC 구조
+
+              1)                2)                3)           4)
+    브라우저 ----------> 서블릿 ---------> 서비스 ---------> DAO ------> DB(Mysql)
+                          |   <--------        <--------      <-----   
+                          |   7)List<DeptDTO>    6)List<DeptDTO>  5)dept테이블레코드들
+                          |
+			  | 8) 서블릿이 가지고 있는
+			       jsp에서 보여줄 데이터를 저장한다.
+			       a. application scope ( Tomcat의 lifecyce 동일 , ServletContext )
+			       b. session scope     ( 웹브라우저의 lifecycle 동일, HttpSession )
+			       c. request scope     ( 요청~응답 lifecycle 동일, HttpServletRequest )
+			       ==> 위 3개의 API이용해서 데이터를 저장한다.  setAttribute(key, value);
+
+			    9) jsp 선택
+			       - 포워드 방법
+			            =>request.getRequestDispatcher("jsp").forward(request, response);
+				    => URL 변경이 안됨.
+				    => 서블릿에서 request scope에 저장된 데이터를 jsp에서 사용 가능.
+
+			       - 리다이렉트 방법
+			            =>response.sendRedirect("jsp");
+				    => URL 변경이 됨.
+				    => 서블릿에서 request scope에 저장된 데이터를 jsp에서 사용 불가능.
+                          |
+
+           <--------    JSP
+
+    1) http://localhost:8090/컨텍스트명/서블릿맵핑명
+
+    * 포워드 vs 리다이렉트
+
+
+       (1) 포워드
+
+           Test서블릿코드: request.getRequestDispatcher("a.jsp").forward(request, response)
+
+                            1)요청(HttpServletRequest request 생성 )
+	 브라우저 -------------------------------> Test서블릿
+                                                   |
+	                                           |  2)재요청(  1에서 만든 request와 2의 request 가 동일하다.
+						               Test 서블릿에서 request.setAttribute(key,vallue) 값을
+							       jsp에서 request.getAttribute(key)에서 사용할 수 있다.
+							       화면에 a.jsp가 보여도 URL값은 Test서블릿 맵핑값으로 남아있다.
+				                 a.jsp
+
+
+
+
+      (2)
+                   Test서블릿코드:response.sendRedirect("a.jsp");
+
+                              1)요청(HttpServletRequest request 생성 )
+          브라우저 -------------------------------> Test서블릿
+                  <------------------------------     |
+                               3)응답(response)        | 
+                                                      |
+			       4)요청(HttpServletRequest request 생성 )   ( 1에서 만든 request와 4의 request 가 다르다.
+                   ------------------------------>   a.jsp               Test 서블릿에서 request.setAttribute(key,vallue) 값을
+							       jsp에서 request.getAttribute(key)에서 사용할 수 없다.
+							       화면 URL이 a.jsp로 변경된다.
+
+
+  나. Spring MVC 구조
+
+
+
+
+                                              HanderMapping ( 요청url값|Controller맵핑값 )
+					 2)요청의뢰/ /												
+             1) 요청                            /  / 3)controller의 어떤 메서드 호출할지 결과 반환
+    브라우저 -----------------> 서블릿(/) ------------->  Controller ----------> 서비스 -------------> DAO -------------> DB(mysql)
+                                                       (4)메서드호출     (5)(10)           (6)(9)                 (7)(8)
+
+                                                      (11)뷰에서 보여줄 데이터를 저장(Model저장)
+                                                      (12)Model를 보여줄 뷰선택
+                                      <---------------
+				         (13)Model과 View 알려줌.
+                                            View는 파일명만 알려줌("home")
+
+
+                                           (14)  ViewResolver(InternalResouceViewResolver)
+					                    /WEB-INF/views/
+							    
+							    .jsp
+                                                최종경로: /WEB-INF/views/home.jsp
+				|
+				|(15)
+	 <-------------	      home.jsp
+            (16)
+
+
+ a. 요청 URL
+
+
+
+   http://localhost:8090/컨텍스트명/서블릿맵핑명
+
+ b. 서블릿
+  - 이전에는 직접 서블릿을 작성, 스프링에서는 제공됨
+  - DispatcherServlet 이고 서블릿맵핑값은 / 로 되어 있음
+  
+  요청url: http://localhost:8090/컨텍스트명/
+
+  - 이전에는 서블릿에서 사용자의 요청에 처리를 담당했음. 예> 사용자 입력데이터 얻기, jsp를 선택(포워딩),...
+    Spring에서는 불가능하다. ===> 서블릿을 대체하는 빈이 필요하다. (Controller 이다. )
+  - 서블릿이 실제 로직을 처리하는 Controller의 메서드를 선택해야 된다.
+
+
+ c.  서블릿이 실제 로직을 처리하는 Controller의 메서드를 선택하는 메커니즘
+
+
+                                                    HanderMapping ( 요청url값|Controller맵핑값 )
+					 2)요청의뢰/ /												
+             1) 요청                            /  / 3)controller의 어떤 메서드 호출할지 결과 반환
+    브라우저 ---------------------> 서블릿(/) ------------->  Controller
+                                                (4)메서드호출          
+                                                        @RequestMapping("/요청맵핑") // write
+							a(){} //글쓰기
+							
+							@RequestMapping("/요청맵핑") // delete
+							b(){} //삭제
+
+   1) 요청
+      
+      url: http://localhost:8090/컨텍스트명/서블릿명/요청맵핑명
+
+        글쓰기
+        http://localhost:8090/컨텍스트명/write  ----------> Controller의 a() 메서드 처리
+
+	삭제
+        http://localhost:8090/컨텍스트명/delete ----------> Controller의 b() 메서드 처리
+
+
+
+       요청할때 url의 정보(요청맵핑명)와 controller의 @RequestMapping("/요청맵핑")의 값을
+       관리하는 빈이 있다. ================> HanlderMapping 이다. 기본은 RequestMappingHandlerMapping 빈이다.
+
+
+
+6. Controller 작성
+
+   가. 클래스레벨에 
+
+      - @Controller ( 일반 )
+
+          ==> 요청에 응답을 화면으로 받음.
+	  ==> jsp로 처리
+
+      - @RestController
+          ==> 요청에 응답을 데이터로 받음.
+	  ==> JSON 로 처리
+
+   나. 메서드 레벨에
+
+       - @RequestMapping("/요청맵핑값")
+       - @RequestMapping(value="/요청맵핑값")
+       - @RequestMapping(value="/요청맵핑값", method=RequestMethod.POST)
+       - @RequestMapping(value="/요청맵핑값", method=RequestMethod.GET)
+
+       - @RequestMapping(value="{/요청맵핑값, /요청맵핑값1}")
+
+       - @RequestMapping(value="/요청맵핑값*")
+       - @RequestMapping(value="/경로/경로1")
+       - @RequestMapping(value="/경로/*/경로1")
+        - @RequestMapping(value="/경로/**/경로1")
+	- @RequestMapping(value="/경로/*")
+	- @RequestMapping(value="/경로/**")
+
+	- @RequestMapping(value="/경로/경로1/{변수}")  // 나중에 Controller에서 {변수} 값을 얻어올 수 있음.
+
+
+	- Springframework 4.3 버전업 후 추가
+	-@GetMapping("/요청맵핑값") ==> 조회할 때 (select)
+	-@PostMapping("/요청맵핑값") ==> 저장할 때 (insert)
+	-@PutMapping("/요청맵핑값")  ==> 수정할 때 (update)
+	-@DeleteMapping("/요청맵핑값") ==> 삭제할 때 (delete )
+
+
+  다. Controlle 등록 ( servlet-context.xml )
+      - xml에 <bean>
+         또는
+      - <context:component-scan base-packages="com.*" />
+
+  라.  Controller 메서드의 리턴값은 jsp로 지정한다.
+      jsp는 /WEB-INF/views/home.jsp 이라면
+
+     예>
+       요청URL: http://localhost:8090/app/list
+
+        @GetMapping("/list")
+	public String list(){
+
+
+         return "/WEB-INF/views/home.jsp";
+	}
+
+
+7. @RequestMapping 클래스 레벨에 사용
+
+   가. 이전
+      @Controller
+      public class TestController {
+		@RequestMapping("/board/list")	
+		public String list(){
+		   return "/WEB-INF/views/home.jsp";
+		}
+                @RequestMapping("/board/write")
+		public String write(){
+		   return "/WEB-INF/views/home.jsp";
+		}
+      }
+    
+  나. 변경
+      @Controller
+      @RequestMapping("/board")
+      public class TestController {
+		@RequestMapping("/list")	
+		public String list(){
+		   return "/WEB-INF/views/home.jsp";
+		}
+                @RequestMapping("/write")
+		public String write(){
+		   return "/WEB-INF/views/home.jsp";
+		}
+
+      }
+
+
+8. View 처리
+
+  가. 현재
+    - 문자열로 jsp 경로를 full path로 지정했음
+
+     @RequestMapping("/write")
+     public String write(){
+	 return "/WEB-INF/views/home.jsp";
+     }
+
+    - 문제점: 경로가 길다.
+            Spring는 jsp뿐만 아니라 다양한 형태로 view를 제공한다. ( html, pdf, excel, ... )
+
+      해결: view가 될수 있는 파일명 + 어떤 뷰기술로 보여줄지 정보(ViewResolover)만 알려줌
+
+           return "home";
+
+   -JSP를 보여주는 ViewResolver 이름은 InternalResourceViewResolver (/WEB-INF/views/ 와  .jsp )이다.
+   - servlet-context.xml 에 등록
+     <bean>
+
+     </bean>
+
+9. 사용자가 입력한 데이터 Controller에서 얻기
+
+
+   브라우저                                         Controller
+<form action="요청맵핑값" method="get|post">         @GetMapping("/요청맵핑값")
+ id:<input type="text"                            public String xxx(){}
+     name="userid">
+ pw:<input type="text"                             @PostMapping("/요청맵핑값")
+     name="passwd">                                public String xxx2(){} 
+  <input type="submit" value="로그인">
+</form>
+
+서블릿버전: action="서브릿맵핑값"
+Spring버전: action="요청맵핑값"
