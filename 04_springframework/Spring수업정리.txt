@@ -1004,3 +1004,132 @@ Spring버전: action="요청맵핑값"
 
 		//리스트
 		List<String> email; // name="email"
+
+
+10. jsp에서 보여줄 데이터(Model)를 생성하는 방법
+
+  가. 이전 서블릿
+      request.setAttribute(key,value);
+      session.setAttribute(key,value);
+      application.setAttribute(key,value);
+
+  
+  나. Spring
+    
+    @GetMapping("/main2")
+	public String home2(HttpServletRequest request) {
+		//Model 저장 ==> JSP에서 출력 가능
+		request.setAttribute("userid", "홍길동");
+		request.setAttribute("passwd", "1234");
+
+     @GetMapping("/main3")
+	public String home3(Model m) {
+		//Model 저장 ==> JSP에서 출력 가능
+		m.addAttribute("userid", "홍길동1");
+		m.addAttribute("passwd", "555");
+
+    @GetMapping("/main4")
+	public String home4(Map<String, String> map) {
+		map.put("userid", "홍길동3");
+		map.put("passwd", "7777");
+
+    @GetMapping("/main5")
+	public String home5( LoginDTO dto) {
+		
+		dto.setUserid( "홍길동3");
+		dto.setPasswd("888");
+
+   @GetMapping("/main6")
+	public String home6(@ModelAttribute("xxx") LoginDTO dto) {
+		
+		dto.setUserid( "홍길동3");
+		dto.setPasswd("888");
+
+  @GetMapping("/main7")
+	public String home7(@ModelAttribute("yyy")ArrayList<LoginDTO> list) {
+		
+		list.add(new LoginDTO("이순신1", "1234"));
+		list.add(new LoginDTO("이순신2", "8888"));
+
+  @GetMapping("/main")
+	public ModelAndView home() {
+
+		ModelAndView mav = new ModelAndView();
+		//모델지정
+		mav.addObject("email", "aaa@naver.com");
+		mav.addObject("phone", "010");
+		
+		//뷰지정
+		mav.setViewName("home5"); //  /WEB-INF/views/home5.jsp
+
+
+
+11. Controller의 메서드 리턴 타입
+
+  가. 리턴타입 String은 View 정보이다.
+
+     // view 정보는 hello이고 Model은 없음
+     @GetMapping("/main")
+     public String a(){
+     
+       return "hello";
+     }
+
+  나.  LoginDTO - 1
+      // view 정보는 없고 Model은 LoginDTO 이다.
+      // CoC에 의해서 ("loginDTO", dto )저장된다.
+      // View정보는 명시적으로 지정하기 않았기 때문에 스프링이 view정보를 요청맵핑값으로 유추한다. 
+      @GetMapping("/main") // /WEB-INF/views/main.jsp
+     public LoginDTO a(){
+
+     }
+
+   나.  LoginDTO-2
+      // view 정보는 없고 Model은 LoginDTO 이다.
+      // 명시적으로 Model의 키값 지정 가능 ( @ModelAttribute(key))
+      // View정보는 명시적으로 지정하기 않았기 때문에 스프링이 view정보를 요청맵핑값으로 유추한다. 
+      @GetMapping("/main") // /WEB-INF/views/main.jsp
+     public @ModelAttribute("xxx")LoginDTO a(){
+
+     }   
+
+   다.  List<LoginDTO>
+      // view 정보는 없고 Model은 List<LoginDTO> 이다.
+      // 명시적으로 Model의 키값 지정 가능 ( @ModelAttribute(key))
+      // View정보는 명시적으로 지정하기 않았기 때문에 스프링이 view정보를 요청맵핑값으로 유추한다. 
+      @GetMapping("/main") // /WEB-INF/views/main.jsp
+     public @ModelAttribute("xxx")List<LoginDTO> a(){
+
+     }   
+
+    라. void
+      // view 정보는 없고 Model도 없음 
+      // View정보는 명시적으로 지정하기 않았기 때문에 스프링이 view정보를 요청맵핑값으로 유추한다. 
+      @GetMapping("/main") // /WEB-INF/views/main.jsp
+     public void a(){
+
+     }   
+
+
+12. Controller에서 특정 메서드에서 
+   다른 메서드로 요청하는 방법
+   예>
+         @GetMapping("/a")
+	 public String xxx(){}
+
+         @GetMapping("/b")
+	 public String xxx2(){
+	 
+	     // a에 재요청
+	     return "a";
+	 }
+
+   가. 포워드
+    -return "forward:a";
+    -b에서 생성된 request를 a에 요청할 때 재사용됨. 따라서 URL 변경안되고
+     b에서 생성한 Model을 a에 사용 할 수 있다.
+
+   나. 리다이렉트
+    - return "redirect:a";
+    -b에서 생성된 request와 a에 요청할 때 request가 다르다. 따라서 URL 변경 되고
+     b에서 생성한 Model을 a에 사용 할 수 없다.
