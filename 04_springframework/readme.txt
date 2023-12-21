@@ -31,3 +31,11 @@ https://zoom.us/j/99841393362?pwd=bm9KK2laSk9NR05SVTVwR3FlNlJFZz09
     <artifactId>commons-dbcp2</artifactId>
     <version>2.5.0</version>
 </dependency>
+
+# Ajax 연동
+    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.14.2</version>
+</dependency>
