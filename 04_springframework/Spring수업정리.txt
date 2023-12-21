@@ -1257,3 +1257,273 @@ Spring버전: action="요청맵핑값"
     </mvc:interceptors>
     
     <bean id="xxx" class="com.interceptor.MyHandlerInterceptor" />
+
+
+4) 정적파일 사용( css, js, image 등 )
+
+    가. 서블릿 버전
+       ==> 정적파일 제한없이 접근  가능
+	  app
+	   - WEB-INF
+	        - web.xml
+
+           - jsp폴더
+	       - a.jsp
+	   - js
+	       - test.js
+	   - css
+	       - test.csss
+	   - images
+	        - test.png
+
+
+    나. Spring 버전
+       ==> 정적파일 접근불가.
+       ==> servlet-context.xml 에 정적파일 경로 지정
+
+          app
+	    - WEB-INF
+	         - views
+		      -jsp
+		        -a.jsp
+		  -js
+		      -test.js
+		  -css
+		      -test.css    
+
+
+
+5) 파일 업로드
+  => 서블릿 3.X 기능포함.
+  => 일반적으로 외부 라이브러리 사용
+      http://jakarta.apache.org
+		      
+   가. 2개의 의존성
+      - Commons-fileupload.jar
+      - Commons-io.jar
+
+    <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.5</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.15.1</version>
+</dependency>
+
+   나. upload 화면: uploadForm.jsp
+
+     <form action="upload" method="POST" enctype="multipart/form-data">
+       comment:<input type="text" name="theText"><br>
+       파일:<input type="file" name="theFile">
+        <input type="submit" value="업로드">
+     </form>
+
+
+   다. UploadDTO.java
+
+       public class UploadDTO{
+		
+	  String theText;
+	  CommonsMultipartFile theFile;
+
+	  //생성자
+	  //getter, setter
+       }
+
+
+   라. servlet-context.xml에 MultipartResolver 등록
+   https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/web.html#mvc-multipart
+    주의할 점은 id="multipartResolver" 로 지정해야 된다.
+        <!-- MultipartResolver 등록 -->
+    <bean id="multipartResolver" 
+         class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
+    
+    </bean>
+
+   
+   마. Controller 구현
+      @PostMapping("/upload")
+	public String upload(UploadDTO dto, Model m) {
+		
+		String theText = dto.getTheText();
+		CommonsMultipartFile theFile = dto.getTheFile();
+      String originalFilename = theFile.getOriginalFilename(); 
+
+       File f = new File("C:\\upload",originalFilename);
+		
+		//theFile =============> f 쓰기
+		try {
+			theFile.transferTo(f);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+      }
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+6) 스프링 예외처리
+
+                                                                   throws XXXException
+ 브라우저 -----------------> 서블릿 -> Controller ---------> Service ----------> DAO
+                                              throws XXXException
+
+   결론은 Controller 에서 예외처리를 한다.
+
+   가. 이전
+      @Autowired
+       DeptService service;
+
+      @RequestMapping("/")
+      public String main(){
+        try{
+            service.insert();
+
+         }catch(XXXException e){
+            //예외 페이지 리다이렉트(포워드) 
+	 }
+      }
+
+
+   나. @ExceptionHandler 어노테이션 
+
+     @Autowired
+       DeptService service;
+
+      @RequestMapping("/")
+      public String main(){
+       
+            service.insert();
+      }
+
+      @ExceptionHandler({발생된예외클래스명}
+      public String error(){
+         return "error"; // error.jsp
+      }
+
+7) Ajax 연동
+
+    가) java ------------------> JSON   (@ResponseBody 사용)
+
+  브라우저(js) ----------------------------------------> Controller
+
+             <---------------------------------------
+	                  JSON
+
+      작업순서
+        (1) 의존성 추가
+	 <dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>2.14.2</version>
+	</dependency>
+
+	 (2) Controller 작성
+
+	    LoginDTO -----------> JSON
+
+	       @GetMapping("/main")
+		@ResponseBody   // 리턴되는 LoginDTO가 더이상 Model로 처리하지 않고 JSON 처리된다.
+		public LoginDTO home() {
+		
+		//LoginDTO 생성
+		LoginDTO dto = new LoginDTO("홍길동", "1234");
+
+		return dto;
+		}
+
+          (3) @ResponseBody 활성화
+	     servlet-context.xml 설정
+	         <!-- servlet-context.xml -->	
+		    <mvc:annotation-driven />
+		    <mvc:default-servlet-handler/>
+
+           (4) ajax코드
+               $(document).ready(function(){
+          $("#main").on("click", function(){
+              // ajax 
+              $.ajax({
+                type:'get',
+                url:"main",
+                dataType:"json", // json, xml
+                success:function(data, status, xhr){
+                    console.log(data);
+                    console.log("아이디:",data.userid);
+                    console.log("아이디:",data["userid"]);
+                    console.log("비번:",data.passwd);
+                    console.log("비번:",data["passwd"]);
+                    
+                },
+                error:function(xhr,status,error){
+                  console.log("Error:", error);
+                }
+              });
+          });//end id="main"
+
+
+
+
+
+    나. JSON ------------------> Java (@RequestBody)
+
+                   JSON
+     브라우저(js) ----------------------------------------> Controller
+
+             <---------------------------------------
+	                  
+         작업순서
+        (1) 의존성 추가
+	 <dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>2.14.2</version>
+	</dependency>
+
+	(2) Controller 작성
+          ==> 반드시 Post로 처리
+
+	    JSON -----------> LoginDTO  
+	    {key:value}
+
+	       @PostMapping("/main")
+		public String home(@RequestBody  LoginDTO dto) {
+		
+		 return "";
+		}
+
+	    JSON -----------> ArrayList<LoginDTO>  
+     [{key:value},{key:value}]
+
+	       @PostMapping("/main")
+		public String home(@RequestBody  ArrayList<LoginDTO>) {
+		
+		 return "";
+		}
+
+        (3) @RequestBody 활성화
+	     servlet-context.xml 설정
+	         <!-- servlet-context.xml -->	
+		    <mvc:annotation-driven />
+		    <mvc:default-servlet-handler/>
+
+        (4) ajax코드
+
+	    $(document).ready(function(){
+          $("#main").on("click", function(){
+              // ajax 
+              $.ajax({
+                type:'post',
+                url:"main",
+                dataType:"text", // json, xml,
+                headers:{
+                   "Content-Type":"application/json"	 
+                },
+                data:JSON.stringify({userid:"홍길동",passwd:"1234"}),
+                success:function(data, status, xhr){
+
+                },
