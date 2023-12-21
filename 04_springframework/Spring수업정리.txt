@@ -1133,3 +1133,127 @@ Spring버전: action="요청맵핑값"
     - return "redirect:a";
     -b에서 생성된 request와 a에 요청할 때 request가 다르다. 따라서 URL 변경 되고
      b에서 생성한 Model을 a에 사용 할 수 없다.
+
+    - 302 상태코드
+
+###########################
+내일 수업 내용
+1) forward/redirect
+2) flash scope
+3) 세션관리
+4) HandlerInterceptor
+5) fileupload
+6) 예외처리
+7) Mybatis 연동
+8) ajax 연동
+
+######################################
+1) flash scope
+  - 기본적으로 redirect 된 Model은 사용할 수 없음.
+   flash scope는 첫번째 rediect된 타겟에서는 Model 사용 가능.
+
+   - 구현
+   가) 반드시 RedirectAttributes 모델 사용
+   나) 모델 저장시 addFlashAttribute(key,value) 사용
+
+2)세션처리
+
+    가. 서블릿 버전
+     
+
+     a. 세션 얻는 방법
+	    // 세션 얻기 ==> 저장소 얻기
+	    // 동작: 저장소(세션)가 존재하면 사용하고 저장소가 없으면 새로 생성해서 저장소 반화니.
+	    HttpSession session = request.getSession();  
+	    HttpSession session = request.getSession(true);
+	    ---------------------------------------------------
+	     // 동작: 저장소(세션)가 존재하면 사용하고 저장소가 없으면 null 반환.
+	    HttpSession session = request.getSession(false); 
+
+     b. 로그인하는 서블릿
+
+        HttpSession session = request.getSession(); 
+	//로그인 정보 저장
+	LoginDTO dto = ~;
+	session.setAttrivute("loginInfo", dto);
+
+
+     c. 로그인 이후의 서블릿 ( mypage, cart, ... )
+       ==> 반드시 로그인 여부 확인
+        
+	HttpSession session = request.getSession();
+        LoginDTO dto = (LoginDTO)session.getAttribute("loginInfo");
+	if(dto!=null){
+	   // 코드구현
+	}else{
+	   //로그인 필요
+	   response.sendRedirect("로그인화면");
+	}
+
+     d. 세션 제거
+
+       - 값만 삭제
+          session.removeAttribute(key);
+       - 전체 세션 삭제
+          - 즉시 삭제 (로그아웃)
+	     session.invalidate();
+	  - timeout
+	       - 메서드 : session.setMaxInactiveInterval(초);
+	       - web.xml   :      <session-config>
+					<session-timeout>60</session-timeout>
+				    </session-config>
+
+
+
+3) HandlerInterceptor
+  
+   가. 서블릿의 Filter
+
+      브라우저 ---->필터 ----->  서블릿
+             <----     <----
+
+       public class MyFilter implments Filter{
+
+
+         public void doFilter( request, response,  FilterChain chain){
+
+              // 서블릿 요청전
+              chain.doFilter(request, response); ==> 서블릿으로 요청
+	      // 서블릿 요청후	
+
+	 }
+
+   나. HandlerInterceptor
+
+
+   브라우저 ------> 서블릿 ------------------> Controller
+                        <------------------
+                    |
+		    |
+		  jsp
+
+     작성방법
+     a. Controller 작성
+     b. HandlerInterceptor 작성
+         extends  extends HandlerInterceptorAdapter
+	  -  preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	       ==> handler 의 Controller 정보
+	  - postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+			ModelAndView modelAndView)
+                ==> 
+	   -afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+
+    c. servlet-context.xml 등록
+
+       <!-- mvc 사용은 반드시 다음 2개는 필수적으로 설정한다. -->
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
+    
+    <mvc:interceptors>
+     <mvc:interceptor>
+       <mvc:mapping path="/loginCheck/*"/>
+       	<ref bean="xxx"/>
+     </mvc:interceptor>
+    </mvc:interceptors>
+    
+    <bean id="xxx" class="com.interceptor.MyHandlerInterceptor" />
