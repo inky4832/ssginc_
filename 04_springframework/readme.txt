@@ -1,7 +1,7 @@
-https://zoom.us/j/94110853395?pwd=ellkdmdnVEp5WmJnNmw0WmthS1lmZz09
+https://zoom.us/j/99841393362?pwd=bm9KK2laSk9NR05SVTVwR3FlNlJFZz09
 
-회의 ID: 941 1085 3395
-암호: 788111
+회의 ID: 998 4139 3362
+암호: 060589
 
 # MySQL DB 연동 
 <dependency>
