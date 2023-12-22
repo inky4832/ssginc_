@@ -17,27 +17,9 @@
 	   
 	   // id 중복체크
 	   $("#idDupulicatedcheck").on("click",function(){
-		   // submit 비활성
-		   event.preventDefault();
-		   // ajax 연동
-		   $.ajax({
-               type:"get",
-               url:"MemberIdCheckServlet",
-               data:{
-            	   userid:$("#userid").val()
-               },  // 요청코드
-               dataType:'text',  //  응답받은 데이터 타입
-               success:function(data, status, xhr){
-                 console.log(data);
-                 $("#result").text(data);
-               },
-               error:function(xhr, status, error){
-                    console.log("erro 발생");
-               }
-            });
+	
 	   });
-	   
-	   // 모든 회원정보가 입력된후  submit 되도록 체크하기
+
 	   
 	   
    });
