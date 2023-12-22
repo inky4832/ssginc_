@@ -9,48 +9,24 @@
 	   
 	   // 수정 버튼 이벤트
 	   $(".updateBtn").on("click", function(){
-		    var num = $(this).attr("data-num");
-		    var gAmount = $("#gAmount"+num).val();
-
-		    //ajax 연동
-		    $.ajax({
-	               type:"get",
-	               url:"CartUpdateServlet",
-	               data:{
-	            	   num:num,
-	            	   gAmount:gAmount
-	               },  // 요청코드
-	               dataType:'text',  //  응답받은 데이터 타입
-	               success:function(data, status, xhr){
-	                   // 합계 변경
-	                   var price = $("#gPrice"+num).text();
-	                   //alert(num + "\t" + price + "\t" + gAmount);
-	            	   $("#sum"+num).text( Number.parseInt(price) * Number.parseInt(gAmount));
-	               },
-	               error:function(xhr, status, error){
-	                    console.log("erro 발생");
-	               }
-	            });
+	
 		    
 	   });//end updateBtn
 	   
 	   // 단일 삭제 버튼 이벤트
 	   $(".deleteBtn").on("click", function(){
-		   var num = $(this).attr("data-num");
-		   //alert(num);
-		   location.href="CartDeleteServlet?num="+num;
+
 		   
 	   });
 	   
 	   // 전체 선택 이벤트
 	   $("#allCheck").on("click", function(){
 		   
-		   // allCheck의 체크 여부 확인
-		   //alert(this.checked);
-		   var allCheck= this.checked;
-		   
-		   // check해야될 체크박스 얻기
-		   //var chk = $(".check");
+	   // allCheck의 체크 여부 확인
+	   var allCheck= this.checked;
+	   
+	   // check해야될 체크박스 얻기
+	   //var chk = $(".check");
            $(".check").each(function(idx,ele){
                this.checked  = allCheck;
            });
