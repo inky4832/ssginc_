@@ -1,7 +1,8 @@
-https://zoom.us/j/99841393362?pwd=bm9KK2laSk9NR05SVTVwR3FlNlJFZz09
+https://zoom.us/j/96664856994?pwd=SkZCbkhDSXQzdmhqQkYyK3hQT3JGZz09
 
-회의 ID: 998 4139 3362
-암호: 060589
+회의 ID: 966 6485 6994
+암호: 833684
+
 
 # MySQL DB 연동 
 <dependency>
