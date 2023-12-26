@@ -22,3 +22,15 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 	</dependency>
+
+# db연동 4가지 정보 프레임워크 버전
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/testdb?characterEncoding=UTF8
+spring.datasource.username=root
+spring.datasource.password=root1234
+
+# db연동 4가지 정보 boot버전
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&serverTimezone=Asia/Seoul
+spring.datasource.username=root
+spring.datasource.password=1234
