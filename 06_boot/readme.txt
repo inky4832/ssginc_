@@ -35,6 +35,12 @@ spring.datasource.url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&serverT
 spring.datasource.username=root
 spring.datasource.password=1234
 
+# devtools 
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-devtools</artifactId>
+</dependency>
+
 # thymeleaf 의존성 설정
 <dependency>
 	<groupId>org.springframework.boot</groupId>
