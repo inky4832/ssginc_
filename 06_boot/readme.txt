@@ -34,3 +34,9 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.datasource.url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&serverTimezone=Asia/Seoul
 spring.datasource.username=root
 spring.datasource.password=1234
+
+# thymeleaf 의존성 설정
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
