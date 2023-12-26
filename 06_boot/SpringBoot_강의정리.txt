@@ -408,3 +408,109 @@
 	         *.js
 	       css
 	          *.css
+
+
+
+9. 파일업로드
+
+   가. 이전 프레임워크
+       -의존성 설정
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.5</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.15.1</version>
+</dependency>
+
+	-xml에 resolver 등록
+	 <!-- MultipartResolver 등록 -->
+    <bean id="multipartResolver" 
+         class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
+      <property name="maxUploadSizePerFile" value="1024*1024*2"></property>
+    </bean>
+
+       - 화면작성
+         <form method="post"
+	      enctype="multipart/form-data">
+
+       - DTO 작성
+      public class UploadDTO {
+
+	String theText;
+	CommonsMultipartFile theFile;
+
+       - Controller 작성
+         @PostMapping("/upload")
+	public String upload(UploadDTO dto, Model m) {
+		
+	   String theText = dto.getTheText();
+	   CommonsMultipartFile theFile = dto.getTheFile();
+        - post 요청이기 때문에 web.xml 에  CharacterEncodingFilter 등록해야 된다. ( 한글처리 )
+   나.  boot
+       - 의존성 설정 불 필요 ( starter-web 에 의존성이 포함 )
+       - 업로드 활성화/비활성화 설정
+       - 업로드 파일크기 설정
+	spring.servlet.multipart.enabled=true
+	spring.servlet.multipart.max-file-size=2M
+	spring.servlet.multipart.max-request-size=10M
+       - 화면작성
+         <form method="post"
+	      enctype="multipart/form-data">
+
+        - DTO 작성
+	  public class UploadDTO {
+
+		String theText;
+		MultipartFile theFile;
+	   // CommonsMultipartFile 안됨.
+
+       - Controller 작성
+
+           @PostMapping("/upload")
+	public String upload(UploadDTO dto, Model m) {
+		
+	    String theText = dto.getTheText();
+	    MultipartFile theFile = dto.getTheFile();
+        
+        - POST 요청에 대한 한글처리 자동 지원됨.
+
+
+10. HandlerInterceptor
+
+   가. 이전 프레임워크
+        - 의존성 추가 없음
+        - MyHandlerInterceptor extends HandlerInterceptorAdapter
+	  하고 필요한 메서드 재정의.
+        - xml에 등록
+	   <mvc:interceptors>
+	     <mvc:interceptor>
+	       <mvc:mapping path="/loginCheck/*"/>
+		<ref bean="xxx"/>
+	     </mvc:interceptor>
+	    </mvc:interceptors>
+	
+   나. boot
+        - 의존성 추가 없음
+	- extends HandlerInterceptorAdapter 는 deprecated 됨.
+	 대신  implements HandlerInterceptor 해야된다.
+	 그리고 필요한 메서드만 재정의한다.
+
+         - Configuration 설정빈에 등록
+
+     @Configuration
+     public class WebConfig implements WebMvcConfigurer {
+
+	@Autowired
+	MyHandlerInterceptor xxx;
+	
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(xxx)
+		        .addPathPatterns("/login","/mypage");
+	}
