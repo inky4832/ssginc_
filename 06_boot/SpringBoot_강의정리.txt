@@ -223,3 +223,90 @@
       나. boot ( 자동활성화 )
          application.properties에서 비활성화 가능
 	 spring.aop.auto=false  ( 기본: true )
+
+
+
+6. DB 연동
+
+  가. 프레임워크 버전
+     -의존성 설정
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>		
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.4.6</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
+<dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis-spring</artifactId>
+    <version>1.3.2</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+    <version>5.0.8.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-dbcp2</artifactId>
+    <version>2.5.0</version>
+</dependency>
+
+   - jdbc.properties 에 4가지 정보 설정 ( key값의 임의의 값 )
+        jdbc.driver=com.mysql.cj.jdbc.Driver
+	jdbc.url=jdbc:mysql://localhost:3306/testdb?characterEncoding=UTF8
+	jdbc.userid=root
+	jdbc.passwd=root1234
+
+    - xml 에 설정정보 추가
+      jdbc.propertiest등록
+      BasicDataSource 등록
+      TransactionManager등록 (명시적 등록필수) + @Transactional
+      SqlSessionFactoryBean 등록 ( Mapper와 DTO 별칠 등록 )
+      SqlSessionTemplate 등록
+
+     - DAO, Service 작성
+
+  나. boot 버전
+    - 의존성
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>	
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.1.4</version>
+</dependency>
+ <!-- HiKariCP DBCP 내부적으로 사용 -->
+
+    - DTO 작성
+      @Alias("별칭")
+
+    - appllication.properties 에 4가지 정보 설정 ( 정해진 key값 이용)
+        spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&serverTimezone=Asia/Seoul
+	spring.datasource.username=root
+	spring.datasource.password=1234
+
+    
+    - appllication.properties 이외 작업
+       
+       # mapper 등록
+	mybatis.mapper-locations=com/config/*Mapper.xml
+
+       # dto 별칭 등록
+	mybatis.type-aliases-package=com.example.dto
+ 
+     - DAO, Service 작성
+
+     - TransactionManager 자동등록되어 있기 때문에
+       @Transactional 만 서비스에서 사용하면 트랜잭션 처리가 된다.
