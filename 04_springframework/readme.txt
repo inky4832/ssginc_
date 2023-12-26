@@ -1,8 +1,7 @@
-https://zoom.us/j/96664856994?pwd=SkZCbkhDSXQzdmhqQkYyK3hQT3JGZz09
+https://zoom.us/j/93482010547?pwd=WEdDdTBndjUrSVNpdXNWT2xHUi8xQT09
 
-회의 ID: 966 6485 6994
-암호: 833684
-
+회의 ID: 934 8201 0547
+암호: 744257
 
 # MySQL DB 연동 
 <dependency>
