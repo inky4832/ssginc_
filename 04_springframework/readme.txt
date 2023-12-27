@@ -1,7 +1,4 @@
-https://zoom.us/j/93482010547?pwd=WEdDdTBndjUrSVNpdXNWT2xHUi8xQT09
-
-회의 ID: 934 8201 0547
-암호: 744257
+https://zoom.us/j/96229346438?pwd=NTBuZmtQZC9sZXB2enJoMEpOdXY4dz09
 
 # MySQL DB 연동 
 <dependency>
