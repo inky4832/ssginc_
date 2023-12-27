@@ -684,3 +684,22 @@ lombok 사용
 	mybatis.type-aliases-package=com.example.dto
 
      사. DAO 와 Service , Controller 작업
+
+ ////////////////////////////////////////
+ // 페이징 처리
+ ///////////////////////////////////////
+
+ 1. 필요한 정보?
+
+    List<BoardDTO> list;  // 한페이지에 보여줄 데이터
+
+    int totalCount;   // 전체 레코드 갯수
+    int perPage=3;     // 페이지당 보여줄 레코드 갯수
+    int curPage;       // 페이지 번호
+
+   위의 4개의 정보는 PageDTO에 저장한다.
+
+
+2. sql문 정렬 (내림차순)
+
+   order by num desc
