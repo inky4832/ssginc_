@@ -41,6 +41,13 @@ spring.datasource.password=1234
 	<artifactId>spring-boot-devtools</artifactId>
 </dependency>
 
+# lombok
+<dependency>
+	<groupId>org.projectlombok</groupId>
+	<artifactId>lombok</artifactId>
+	<optional>true</optional>
+</dependency>
+
 # thymeleaf 의존성 설정
 <dependency>
 	<groupId>org.springframework.boot</groupId>
