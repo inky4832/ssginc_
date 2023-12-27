@@ -1,4 +1,7 @@
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+
 # boot mysql mybatis 연동 의존성
 <dependency>
     <groupId>org.mybatis.spring.boot</groupId>
