@@ -45,7 +45,6 @@ spring.datasource.password=1234
 <dependency>
 	<groupId>org.projectlombok</groupId>
 	<artifactId>lombok</artifactId>
-	<optional>true</optional>
 </dependency>
 
 # thymeleaf 의존성 설정
