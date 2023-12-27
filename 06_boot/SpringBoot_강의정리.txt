@@ -514,3 +514,173 @@
 		registry.addInterceptor(xxx)
 		        .addPathPatterns("/login","/mypage");
 	}
+
+##########################################################################
+11. profile
+
+    가. 이전 프레임워크 ( xml 파일명을 내마음대로 지정 가능 )
+        - user_dev.xml  ==> 개발버전
+	     <beans profile="dev">
+	  user_prod.xml ==> 배포버전
+              <beans profile="prod">
+
+
+        - ApplicationContext에서 xml 등록후 active profile 지정
+          ctx.getEnvironment().setActiveProfiles("prod");  //dev, prod
+	   ctx.load("classpath:user-dev.xml", "classpath:user-prod.xml");
+	   ctx.refresh();  
+
+    나. boot
+        - applicaton.properties ( 이름이 정해져 있음 )
+	     active profile 지정
+
+          applicaton-dev.properties
+	  applicaton-prod.properties
+    
+
+
+12. @Value
+
+   application.properties에 설정된 값을 얻을 수 있다.
+   xxx=1234
+
+   Controller 에서
+
+      @Value("${xxx}")
+      String value;
+
+13. yml
+ 
+   boot 에서 사용한 configuration 설정 파일 2가지
+
+   가. application.properties
+       예> key.key2.key3=값
+
+   나. application.yml
+       예> key:
+             key2:
+	        key3:값
+
+14. JSON 처리
+               JSON --------->java ( @RequestBody )
+     브라우저  -------------------> Controller
+             <------------------
+                 json<------java ( @ResponseBody )
+
+
+    가. 이전 프레임워크
+          -의존성 추가
+                <dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.14.2</version>
+		</dependency>
+          - 어노테이션 필요
+	      
+	      JSON-----> Java  @RequestBody
+	      Java ----> JSON  @ResponseBody
+
+           - @RequestBody 와 @ResponseBody 활성화
+                  <mvc:annotation-driven />
+		  <mvc:default-servlet-handler/>
+
+
+    나.  boot
+         - 자동으로 의존성 추가 ( starter-web )
+	  - 어노테이션 필요
+	      
+	      JSON-----> Java  @RequestBody
+	      Java ----> JSON  @ResponseBody  
+
+          - @RequestBody 와 @ResponseBody 자동 활성화
+#########################################################
+lombok 사용
+  가. c:\lombok.jar 저장
+  나. 의존성 설정
+  다. lombok.jar 실행
+    cmd 창에서
+    c:\>java -jar lombok.jar  엔터
+  라. 실행된 화면에서 location 선택하고
+     사용하고자 하는 sts의 sts.exe 선택하고 install/update 클릭한다.
+
+#########################################################
+15. 게시판 구현
+   
+   가. 프로젝트 생성
+     boot_07_board
+
+   나. board 테이블 작성
+     
+       create table board
+       ( num integer primary key  auto_increment,
+         title varchar(50) not null,
+	 author varchar(50) not null,
+	 content varchar(500) not null,
+	 writeday date default ( now() ),
+	 readcnt integer default 0 );
+ 
+      insert into board ( title, author, content )
+      values ( '실습','홍길동','내용무');
+      commit;
+
+    다. 환경설정
+
+       - 의존성 설정
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+
+       <dependency>
+	    <groupId>org.apache.tomcat.embed</groupId>
+	    <artifactId>tomcat-embed-jasper</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>jstl</artifactId>
+	</dependency>
+        <dependency>
+	    <groupId>mysql</groupId>
+	    <artifactId>mysql-connector-java</artifactId>
+	    <version>8.0.33</version>
+	</dependency>	
+	<dependency>
+	    <groupId>org.mybatis.spring.boot</groupId>
+	    <artifactId>mybatis-spring-boot-starter</artifactId>
+	    <version>2.1.4</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+	</dependency>
+	 <dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+	</dependency>
+
+    라. BoardDTO.java 작성 ( lombok 이용 )
+
+        @Alias("BoardDTO");
+	public class BoardDTO{}
+
+    마. mapper 작성
+
+        src/main/resource/
+	       com.config.mapper
+	              BoardMapper.xml
+
+
+     바. application.properties DB 연동 설정
+       # mysql 연동하기 위한 4가지 정보 설정
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb?useUnicode=true&serverTimezone=Asia/Seoul
+	spring.datasource.username=root
+	spring.datasource.password=root1234
+
+
+	# mapper 등록
+	mybatis.mapper-locations=com/config/*Mapper.xml
+	# dto 별칭 등록
+	mybatis.type-aliases-package=com.example.dto
+
+     사. DAO 와 Service , Controller 작업
