@@ -46,3 +46,33 @@ spring.datasource.password=1234
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-starter-thymeleaf</artifactId>
 </dependency>
+
+# Swagger3 의존성 설정
+	<dependency>
+	    <groupId>io.springfox</groupId>
+	    <artifactId>springfox-boot-starter</artifactId>
+	    <version>3.0.0</version>
+    </dependency>
+
+
+#####################################################################
+//Swagger2: http://localhost:8090/swagger-ui.html
+//Swagger3: http://localhost:8090/swagger-ui/index.html
+@Configuration
+@EnableWebMvc
+public class SwaggerConfig {
+	
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.OAS_30)
+				.useDefaultResponseMessages(false)
+				.select()
+				.apis(RequestHandlerSelectors
+						.basePackage("컨트롤러패키지지정"))
+				.paths(PathSelectors.any())
+				.build();
+	}
+}
+#####################################################################
+
+
