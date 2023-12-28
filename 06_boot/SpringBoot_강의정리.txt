@@ -703,3 +703,32 @@ lombok 사용
 2. sql문 정렬 (내림차순)
 
    order by num desc
+
+
+##################################
+#################################
+1. thymeleaf
+ 
+   - 화면처리 기술이다. ( html, jsp, velocity, .... )
+   - springframework은 거의 jsp 로 처리함.
+   - springboot 는 jsp 권장안함. thymeleaf 권장.
+
+   - http://www.thymeleaf.org 참조
+
+   - 의존성 추가
+                <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+   - 확장자는 html 이고 
+     src/main/resource/templates 폴더에 저장한다.
+
+
+    - html의 <html xmlns:th="http://www.thymeleaf.org"> 설정하고
+      시작태그에서 th:xxx="값" 형식으로  사용한다.
+
