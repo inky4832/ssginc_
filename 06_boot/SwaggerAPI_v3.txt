@@ -1,0 +1,29 @@
+
+* RESTful 서비스의 요청값을 html 제공한다.
+
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-boot-starter</artifactId>
+    <version>3.0.0</version>
+</dependency>
+
+//Swagger3: http://localhost:8090/swagger-ui/index.html
+@Configuration
+@EnableWebMvc
+public class SwaggerConfig {
+	
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.OAS_30)
+				.useDefaultResponseMessages(false)
+				.select()
+				.apis(RequestHandlerSelectors
+						.basePackage("com.ecommerce.customer.controller"))
+				.paths(PathSelectors.any())
+				.build();
+	}
+	
+}
+
+# application.properties 에 설정
+spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
