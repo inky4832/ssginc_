@@ -732,3 +732,315 @@ lombok 사용
     - html의 <html xmlns:th="http://www.thymeleaf.org"> 설정하고
       시작태그에서 th:xxx="값" 형식으로  사용한다.
 
+2. REST 서비스
+
+    가. 이전 서비스 (SOAP)
+
+       특징
+         - 요청 method: get/post
+	     get:검색 (select)
+	     post:생성,수정,삭제 (DML) ==> 서버의 데이터가 변경될 수 있는 작업인 경우에 post로 요청한다.
+
+	 - 서버로 파라미터 전달하는 일반적인 방법: query string ( URL에 포함안됨 )
+	   예> http://localhost:8090/app/retrieve?num=2
+              http://localhost:8090/app/delete?num=2
+             ==> URL에 기능을 명시해서 정보를 표현한다.
+           
+	  - query string 값 얻기 위한 방법? @RequestParam 이용
+
+          - 응답 처리 2가지
+	      a. JSP 반환 ( 화면이 존재함 )
+	      b. Ajax 이용해서 JSON 반환 ==> @ResponseBody 
+                                          @RequestBody
+
+    나. REST 서비스
+
+        특징
+	  -요청 method: get/post/put/delete/
+	               patch/option
+
+	    	get:검색 (select)	
+                post:생성 (insert)
+	        put:생성 (update)
+                delete:생성 (delete)
+
+
+           - 서버로 파라미터전달시 URL 포함하여 전달함.
+	    
+	    예> http://localhost:8090/app/2 + 어떤 동작할지는 요청 method로 알려준다.
+
+               GET http://localhost:8090/app/2
+	       PUT http://localhost:8090/app/2
+	       DELETE http://localhost:8090/app/4
+ 
+            - URL에 포함된 값을 얻기 위한 방법? @PathVariable
+	    - 응답 처리 1가지
+                    JSON 요청하고 반환
+
+		             JSON
+		브라우저 -------------------> Controller
+		       <-------------------
+		             JSON    ==========> 모든 Controller(@Controller)  메서드에 @ResponseBody 
+			             ==========> 한방에 할 수 있는 방법 ( @Controller + @ResponseBody 결합)은
+				                 @RestController 이다.
+
+						
+	     - 등장 배경?
+	      
+	       클라이언트가 너무 다양해짐.
+
+	       pc의 브라우저가 대부분이었는데
+	       현재는 핸드폰, 태블릿, TV, ......
+
+	      - REST 개발시 사용 가능한 툴?
+	         postman (GUI 툴 )
+		 curl ( CUI 툴 )
+		 Swagger 라이브러리 ( 웹 dashboard 제공 )
+
+
+              - 응답처리 패턴
+	       
+	          ResponseEntity 클래스 저장 ( 상태값, 응답데이터 )
+
+
+3. Swagger3 ( SpringBoot 2.6 이상 )
+
+   가. 의존성 설정
+     <dependency>
+	    <groupId>io.springfox</groupId>
+	    <artifactId>springfox-boot-starter</artifactId>
+	    <version>3.0.0</version>
+    </dependency>
+
+   나. 요청하는 Controller 등록 가능한 빈 생성
+
+      @Configuration
+@EnableWebMvc
+public class SwaggerConfig {
+	
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.OAS_30)
+				.useDefaultResponseMessages(false)
+				.select()
+				.apis(RequestHandlerSelectors
+						.basePackage("컨트롤러패키지지정"))
+				.paths(PathSelectors.any())
+				.build();
+	}
+}
+
+   다. 요청
+
+      a. Controller에 요청
+
+
+      b. Swagger 에 요청
+      http://localhost:8090/컨텍스트/swagger-ui/index.html
+      
+      http://localhost:8090/app/swagger-ui/index.html
+
+
+##################################
+#################################
+3. Spring Security
+
+  가. 개요
+  Spring기반 프로젝트 개발시 사용자의 인증(Authentication)과 
+  권한(Authorization) 처리를 담당하여  리소스의 접근 제어를 가능하게 도와준다.
+  Spring 의 서브 프로젝트이다.
+  필터(filter) 기반이다.
+
+   브라우저 -------필터1--필터2------------------> Controller ( 보호 X )
+
+           -------필터1--필터2------------------> Controller ( 보호 0 )
+
+   나. 용어
+
+     -Principal : 접근 주체 ( 사용자 )==> id 의미
+     -Credencial : => pw 의미
+     -secured resource: 보안이 적용되는 리소스 의미 ( 인증 및 인가 필요 )
+     -Authentication(인증): Principal 가 믿을 수 있는지 확인하는 작업
+                           예> ID/PW 이용한 로그인 
+     -Authorization(인가,권한): 인증이 완료된 Principal의 어떤 행위를 할 권한이 있는지 확인
+                              ROLE 이용
+			      예> 관리자, 사용자
+    
+   * spring security authentication architecture
+
+
+4. 실습 순서
+
+ 가.  boot_inky_security1_적용전_제공파일
+     - Spring Security 적용전 코드
+     - 아무나 접근할 수 있다.
+
+ 나. boot_inky_security2_인증Filter추가
+    - 의존성 추가
+    <dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+   
+    실습: 의존성만 추가했음에도 불구하고 브라우저에서 Controller 요청시
+      Spring Security가 제공해준 로그인이 보여진다. 지금부터 인증작업이 시작됨.
+      console에는 임시 암호화된 비번이 제공된다. ( 반드시 비번을 암호화해서 저장해야 된다. )
+
+    - 어떤 요청을 허용하고 허용안할지 결정
+     
+       SecurityConfig 빈을 이용해서 SecurityFilterChain 생성.
+
+      @Configuration
+public class SecurityConfig {
+
+	@Bean  // 객체생성
+	public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
+		System.out.println("SecurityConfig.filterChain");
+		
+		//누구 허용할지 안할지 결정 
+		// 허용할 페이지: /signup, /login
+		
+		http
+			.authorizeRequests()
+				.antMatchers("/login","/signup").permitAll()
+				.anyRequest().authenticated();
+		
+		
+		
+		return http.build();
+	}
+}
+
+   실행결과: 웹브라우저 close 한후 실습
+          login과 signup 요청시 제대로 화면에 나옴.
+	  다른 요청은 403 forbidden 예외가 발생됨.
+
+       - 허용하지 않은 사용자을 위한 로그인 화면 설정
+
+       // 로그인 화면 설정
+		http
+			.formLogin()
+				.loginPage("/login") // 로그인 화면설정 ==> id와 pw입력, loginPage.jsp 반드시 post
+				.loginProcessingUrl("/auth")// 입력한 id와 pw를 체크할 Security 빈. 반드시 post요청
+				.usernameParameter("email")  // 로그인 화면에서 입력한  id값
+				.passwordParameter("password")// 로그인 화면에서 입력한  pw값
+				.defaultSuccessUrl("/");   // 로그인 성공후 보여줄 타겟
+
+   실습결과:
+          /login과 /signup 이외의 요청은
+	 .formLogin()의 .loginPage("/login") 의해서 loginPage.jsp 로 간다.
+	 아직 비번이 암호화 안된 상태이기 때문에 로그인은 안됨.
+
+       - 로그아웃 처리
+         로그아웃 처리는 자동으로 해줌.
+
+    다. boot_inky_security3_비번암호화및인증처리
+
+        - 회원가입시 비번 암호화
+	   //암호화
+	    private final PasswordEncoder passwordEncoder =
+			new BCryptPasswordEncoder();
+	        public PasswordEncoder passwordEncoder() {
+    		 return passwordEncoder;
+		}
+	    public void signup(UserDTO userVo) { // 회원 가입
+	    
+		String pw = userVo.getPassword(); // 1234
+		userVo.setPassword(passwordEncoder.encode(pw)); // 암호화된 1234
+	 
+		userMapper.insertUser(userVo);
+		
+	    }
+          - 회원수정시 비번 암호화
+	  public void edit(UserDTO userVo) { // 회원 정보 수정
+		String pw = userVo.getPassword(); // 1234
+		userVo.setPassword(passwordEncoder.encode(pw)); // 암호화된 1234
+		userMapper.updateUser(userVo);
+	    }
+
+	 - 입력된 id/pw 이용해서 인증처리 작업처리 빈 생성
+package com.example.auth;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import com.example.dto.UserDTO;
+import com.example.service.UserService;
+
+@Component
+public class AuthProvider implements AuthenticationProvider {
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    	System.out.println("AuthProvider.authenticate");
+        String email = (String) authentication.getPrincipal(); // 로그인 창에 입력한 email 
+        String password = (String) authentication.getCredentials(); // 로그인 창에 입력한 password
+
+        //DB에 저장된 사용자 정보 얻기
+        PasswordEncoder passwordEncoder = userService.passwordEncoder();    
+        UserDTO userVo = userService.getUserByEmail(email);
+
+        UsernamePasswordAuthenticationToken token;
+        
+        if (userVo != null && passwordEncoder.matches(password, userVo.getPassword())) { // 일치하는 user 정보가 있는지 확인
+            List<GrantedAuthority> roles = new ArrayList<>();
+            roles.add(new SimpleGrantedAuthority("USER")); // 권한 부여 (ROLE_USER) 
+
+            token = new UsernamePasswordAuthenticationToken(userVo.getId(), null, roles); 
+            // 인증된 user 정보를 담아 SecurityContextHolder에 저장되는 token
+            return token;
+        }
+        throw new BadCredentialsException("No such user or wrong password."); 
+        // Exception을 던지지 않고 다른 값을 반환하면 authenticate() 메서드는 정상적으로 실행된 것이므로 인증되지 않았다면 Exception을 throw 해야 한다.
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return true;
+    }
+}
+
+   실행결과:
+        lee@naver.com/1234
+	hong@daum.net/1234  입력후 로그인하면 정상적으로 처리됨.
+
+	이외의 입력후 /로 리다이렉트됨.
+     
+
+
+        - 실패후 화면처리와 성공후 화면처리
+
+	// 로그인 실패 했을 때 화면
+	.failureForwardUrl("/login_fail") // @PostMapping으로 지정필수
+	// 로그인 성공후 보여줄 타겟
+	// true로 지정하면 바로 타겟으로 감. 기본은 false이면 이전 URL 로 감.
+	.defaultSuccessUrl("/login_success", true); 
+
+
+	- 로그인 성공화면에서 보여줄 메시지
+
+	  예> 안녕하세요. 홍길동 님
+
+	  ==>jsp에서 security 태그 사용하기 위한 의존성 추가
+           <dependency>
+		<groupId>org.springframework.security</groupId>
+		<artifactId>spring-security-taglibs</artifactId>
+	  </dependency>
+	   <sec:>
+
+          ==> AuthProvider 수정
+	  token = new UsernamePasswordAuthenticationToken(userVo.getId(), null, roles); 
+	  token = new UsernamePasswordAuthenticationToken(userVo, null, roles); 
