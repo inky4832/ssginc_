@@ -172,14 +172,15 @@ reactjs 강좌정리
 
 
    1) props (속성값) 
-      - 변경불가 ( readonly ) 	 
+      - 변경불가 ( readonly ), option 이다.	 
       - 용도:부모컴포넌트에서  자식컴포넌트로 데이터 전달할 때 사용됨. 
             자식에게 JSON 형식으로 전달됨.
        예>
              // 부모
              function App(){
 		return(
-		   <Profile name="홍길동" age={20} />	
+		   <Profile name="홍길동" age={20} />
+		   <Profile />
 		)
 	     }
 
@@ -187,12 +188,160 @@ reactjs 강좌정리
 	     function Profile(props){  // {name:"홍길동", age:20 }
 		  const {name, age} = props;
 	     }
-	     // 자식2 - 객체분해할당 이용	
-	     function Profile({name,age}){  // {name:"홍길동", age:20 }
+
+	     // 자식2 - 객체분해할당 이용, default 값 지정 가능	
+	     function Profile({name,age=20}){  // {name:"홍길동", age:20 }
 		  
 	     }
         
+        - children 방식으로 JSX 전달
+            // 부모
+             function App(){
+		return(
+		   <Profile name="홍길동" age={20} >
+		     몸체(문자열, JSX태그들)
+		   </Profile>
+		)
+	     }
+            
+	    // 자식1	
+	     function Profile(props){  // {name:"홍길동", age:20 , children:몸체}
+		  const {name, age, children} = props;
+	     }
+	    // 자식2	
+	     function Profile({name, age, children}){
+
+	     }
+
+	 정리: 부모에서 자식에게 데이터를 전달하는 방법 2가지
+	      - 속성(attribute)이용
+	      - children 이용
+
    2) state (상태값)
       - 변경가능 (read/write)
       - 용도: 컴포넌트에서 필요한 데이터중에서 변경이 필요한 데이터 처리시 사용됨.
       - 특징: state값이 변경되면 변경된 state값을 보여주기 위해서 자동 재랜더링된다. 
+
+############################################
+  실습  
+	src_03_props01_기본
+	src_03_props02_children
+############################################
+
+10. 이벤트 처리
+
+   - 이벤트 핸들러(이벤트함수)는 함수 컴포넌트 안에서 정의 ( 중첩형태 )
+   - 이벤트 핸들러지정시 카멜표기법을 사용한다.  예> onClick, onChange
+   - 콜백형식 및 arrow 함수 방법으로 사용한다.
+
+        function handleEvent(event){
+	  event.preventDefault();	
+	}
+
+     예> onClick={handleEvent}
+        onClick={()=>{handleEvent()}} 
+
+    - 이벤트객체를 얻기 위해서 반드시 event 파라미터를 지정해야 된다.
+    - 기본동작 방지는 반드시 event.preventDefault(); 만 가능하다. ( JS 처럼 return false 안됨 )
+    - 부모에서 자식에게 이벤트함수를 전달해서 자식이 부모의 함수 호출이 가능하다. ==> 자식에서 부모에게 임의의 값을 전달 가능
+############################################
+  실습 
+	src_04_이벤트처리1_기본
+	src_04_이벤트처리2_자식에서부모함수호출
+	src_04_이벤트처리3_form태그의자동submit방지
+############################################
+
+11. hook 개념
+
+   1) 개요
+    -클래스 컴포넌트에서만 사용했던 기능을 함수형 컴포넌트에서도 
+    사용할 수 있게 지원해줌 ==> hook
+    -함수형 컴포넌트 개발을 권장함
+
+   2) 사용규칙
+      - 반드시 react 함수 컴포넌트의 최상위에서만 사용 가능 ( 조건문,반복문 사용 불가 )
+      - useXXX 형식으로 제공, 커스텀 hook 작성 가능
+      - 여러 개 지정 하면 순차적으로 적용됨.
+
+  3) 종류
+
+     - useState : 상태(state) 관리
+     - useEffect : 부수효과(side effect)
+                   핵심기능과 무관한 기능처리에서 사용 ( 예> 서버연동, DOM 변경 )
+                   스프링의 AOP 개념
+     - useRef   : DOM 직접 접근
+     - useContext : 전역 데이터 관리
+     - useMemo  : 메모이제이션 기능 
+                  계산량이 많은 함수를 기억해서 이전 연산값을 재활용한다. 
+     - useCallback : 메모이제이션 기능 
+                     함수를 재생성 방지
+
+      - useReducer : ustState 업그레이드 버전
+		 
+
+12. useState hook
+
+   1)개요
+    -  컴포넌트에서 사용할 데이터중에서 변경 될 수 있는 데이터 처리시 사용됨. ( read/write 모두 가능 )
+    -  state 값이 변경되면 자동으로 재랜더링 된다.
+    - state값에 저장되는 데이터는 문자,숫자,배열,JSON 모두 가능
+      주의할 점은 객체(배열,JSON)는 불변객체로 관리해야 된다.
+      불변객체? 새로운 값을 덮어쓰는 방식이다. 일반적으로 객체분해할당 이용(****)
+    
+    - state 에 boolean 값을 지정할 때 권장방식은 함수형태로 지정한다.
+       예> isFlag(boolean)=true;
+          setXXX(!isFlag); //권장 안함
+	  setXXX(isFlag=>!isFlag) // 권장
+ 
+    - state를 setXXX 함수로 변경하는데 바로 적용 안됨. ==> 배치(스케쥴링) 형식으로 처리함.
+
+   2) 사용방법
+
+       가. import {useState} from 'react';
+       나. 함수 컴포넌트 최상위에서 선언
+           funtion Profile(){
+	      // hook 사용 가능
+	      const [변수, set변수명] = useState(초기값);
+	
+              function(){
+	        // hook 사용불가
+	      }
+
+	   }
+	다. state 수정
+	     function handleEvent(){
+		set변수명(새로운값);	
+	     }
+	     ==> 주의: 새로운값이 객체이면 새로운 객체를 만들어서 덮어쓰는 방식으로 수정해야 된다. ( 불변객체로 관리한다고 한다.)
+	     ==> 자동으로 화면 재랜더링 됨.
+	라. state 값 참조
+	   jsx: {변수}
+
+############################################
+  실습 
+   src_05_useState01_기본
+   src_05_useState02_불변객체_배열	
+   src_05_useState02_불변객체2_JSON
+############################################
+
+13. state 이용한 조건부 랜더링 
+
+    1) if문
+    2) 3항 연산자
+    3) && 연산자 ( ***** )
+
+############################################
+  실습 
+	src_05_useState03_조건부랜더링3가지방법
+############################################
+
+14. two-way binding 방법
+    - state와 input 태그 같이 사용하는 경우에 적용하는 방법이다.
+
+
+
+
+
+
+
+
