@@ -1,0 +1,198 @@
+reactjs 강좌정리
+
+1. 환경설정
+
+  가.node.js설치
+  나.vsc 설치
+  다. vsc 확장팩
+    - live server
+    - reactjs code snippets (클래스기반)
+    - reactjs snippets  ( 함수기반 )
+
+  라. 크롬 브라우저에 React 플러그인 설치
+      react developer tools
+
+  
+
+2. 리액트 개요
+
+   가. client side rendering ( CSR )
+      - 일반적으로 말하는 reactjs
+      - http://ko.reactjs.org
+	
+   나. server  side rendering ( SSR )
+      - next.js 라고 부른다.
+      - https://react.dev
+
+3. 리액트 특징
+   - facebook에서 제공
+   - 가상 DOM을 이용해서 빠른 DOM 조작이 가능
+   - JSX 로 화면을 정의 ( html과 비슷 )
+     ==> JSX는 나중에 html로 변환되어 처리됨
+   - SPA ( Single Page Applicatio ) 최적화.
+     ==> 미리 서버에서 하나의 index.html 파일을 다운받음.
+         index.html 파일에 보여줄 수 있는 화면을 모두 포함함.
+	 쪼개서 화면을 보여주는 방식이고 필요한 데이터는 서버에서 JSON 받아서 보여준다.
+	 반대개념은 MPA ( Multiple Page Application)로서
+	 필요할 때 서버에서 화면을 받아서 보여줌.
+
+4. 개발 방법
+
+   가. CDN 방식
+      - 필요한 js 파일을 네트워크로 링크 지정해서 개발방법
+
+   나. tool chain 방식 (*)
+      - 도구 이용
+
+5. React Tool Chain 방식으로 개발 방법
+
+   가. 프로젝트 생성
+      npx create-react-app 프로젝트명
+     
+     예> npx create-react-app my-app
+        cd my-app  
+        npm start open
+       => http://localhost:3000/ 요청해서 화면에 랜더링 됨
+
+   나. my-app 프로젝트 구조
+
+      public/index.html  ==> 메인 홈페이지 화면
+                             src/index.js 랜더링 해줌.
+      public 폴더: 외부에서 그냥 접근 가능.
+
+      src/index.js  : 시작점. <App /> 컴포넌트를 로딩해서 id="root"에 랜더링 됨.
+      src/App.js    : 리액트의 함수 컴포넌트
+                      컴포넌트의 화면을 구성하는 블럭이다.
+
+       package.json  : nodejs의 모듈 관리 설정 파일
+                      ( maven의 pom.xml 역할 )
+
+6.컴포넌트(Component) 개요
+
+  가. 개념
+  - 웹화면에서 보여지는 화면 블럭을 의미한다. ( 서블릿버전의 top.jsp 또는 menu.jsp )
+  - html과 비슷한 JSX 로 작성된다. ( JSX는 나중에 html로 변환됨 )
+  - html과 비슷하게 중첩해서 작성한다. ( 컴포넌트 중첩 )
+
+  나. 컴포넌트 생성 방법 2가지
+
+    a. 클래스 컴포넌트
+       - extends React.Component
+       - render() 메서드 구현
+       - return ( JSX코드 )
+       - export 컴포넌트명
+
+    b. 함수형 컴포넌트 (*****)
+       - function 함수명(){}
+         ==> 반드시 클래스처럼 함수명의 첫글자는 대문자로 지정해야 된다.
+	    이유는 컴포넌트를 화면에 보여줄 때 <함수명 /> 태그형식으로 보여준다.
+	    일반적인 html 태그와 구별하기 위해서 첫글자는 대문자로 지정한다.
+	     예> <form> 과 <Form>
+	        <form>은 html태그고
+		<Form>은 함수형 컴포넌트이다.
+        - return( JSX 코드 )
+	- export 함수명 또는 export default 함수명
+     
+       ==> 화면에 보여주기 위해서는 일반적으로 사용하는  함수명() 형식이 아니고
+           반드시 태그형태로 사용해야 된다. =>  <함수명 />
+  
+  ############################################
+  실습 src_01_컴포넌트작성_기본
+      src_01_컴포넌트작성2_외부파일로작성
+   ############################################
+
+7. 컴포넌트 리턴값
+
+   1) JSX 반환
+   2) 일반 데이터 ( 문자열, 숫자 )
+   3) 배열 ( JSON 불가 )
+   4) null, true, false 사용 가능 ==> 랜더링 안됨.
+     => 조건부 랜더링(*****)
+       JSX 영역에서 자바스크립트 사용하기 위해서는 {} 사용해야 된다.
+       예> { 변수명 && <p>hello</p> }  변수명이 true이면 <p>가 보이고 
+                                            false이면 <p>가 안보임.
+  ############################################
+  실습   
+      src_01_컴포넌트작성3_반환값종류
+  ############################################
+    
+8. JSX
+
+  1)개념
+    - JSX ( Javascript XML)로서 UI 구현 담당.
+    - JSX는 브라우저에서 보여지기전에 html로 바뀐다. ( tool chain이 변경해줌 )
+      따라서 JSX는 그냥 브라우저에서 바로 볼수 없다. ( JSX는 비표준 문법 )
+
+  2)특징
+   - JSX는 반드시 종료태그가 있어야 된다. 
+     예> html의 br태그는 종료태그가 없다. <br>
+         JSX 에서는 <br/> 지정해야 된다.                               
+
+   - JSX는 반드시 단 하나의 root태그가 있어야 된다. 일반적으로 <div> 대신에 <> 주로 사용된다.
+     예> return(
+           <>
+	    <p></p>
+            <p></p>
+           </>
+         )
+   
+    - JSX에서 자바스크립트 사용할 때는 반드시 {} 사용한다.
+    - JSX에서 이벤트처리시 카멜표기법 사용해야 된다.
+       예> <button onclick="">  안됨.
+           <button onClick="">  됨.
+
+    - JSX에서 css 설정하기 위해서 class 대신에 className 를 사용해야  된다.
+       예> <button class="">  안됨.
+           <button className="">  됨.
+
+	  ==> class는 키워드이기 때문이다.
+
+     - JSX에서 라벨 태그에 for 키워드 대신에 htmlFor 를 사용해야 된다.
+       예> <label for="id">아이디    안됨.
+            <input  name="id" />
+
+
+	    <label htmlFor="id">아이디    됨.
+            <input  name="id" />
+
+      - JSX에서 style 속성으로 지정시  속성명의 -(하이픈) 대신에 카멜표기법을 사용해야 된다.
+        중첩 {{}} 형식을 사용한다.
+       예> <p style="font-size:'30px'">  안됨
+           <p style={{fontSize:'30px'}}">   됨
+
+      - JSX에서 주석문은  {/* 문장 */}
+      - JSX 에서 image는 src/assets 폴더에 저장하고 import 해서 사용한다.
+
+############################################
+  실습   
+	src_02_JSX
+############################################
+
+9. 리액트에서 사용 가능한 데이터 종류
+
+
+   1) props (속성값) 
+      - 변경불가 ( readonly ) 	 
+      - 용도:부모컴포넌트에서  자식컴포넌트로 데이터 전달할 때 사용됨. 
+            자식에게 JSON 형식으로 전달됨.
+       예>
+             // 부모
+             function App(){
+		return(
+		   <Profile name="홍길동" age={20} />	
+		)
+	     }
+
+	     // 자식1	
+	     function Profile(props){  // {name:"홍길동", age:20 }
+		  const {name, age} = props;
+	     }
+	     // 자식2 - 객체분해할당 이용	
+	     function Profile({name,age}){  // {name:"홍길동", age:20 }
+		  
+	     }
+        
+   2) state (상태값)
+      - 변경가능 (read/write)
+      - 용도: 컴포넌트에서 필요한 데이터중에서 변경이 필요한 데이터 처리시 사용됨.
+      - 특징: state값이 변경되면 변경된 state값을 보여주기 위해서 자동 재랜더링된다. 
