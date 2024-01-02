@@ -1,3 +1,6 @@
 
 # Amazon S3 버킷의 특정 폴더 또는 파일에 액세스할 수 없는 이유는 무엇인가요?
 https://repost.aws/ko/knowledge-center/s3-access-file-folder
+
+# S3 객체별로 접근권한 설정하기
+https://velog.io/@kjyeon1101/Spring-AWS-S3-%EA%B0%9D%EC%B2%B4%EB%B3%84%EB%A1%9C-%EC%A0%91%EA%B7%BC%EA%B6%8C%ED%95%9C-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-97bduqh0
