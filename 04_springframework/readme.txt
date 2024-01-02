@@ -1,4 +1,4 @@
-https://zoom.us/j/96229346438?pwd=NTBuZmtQZC9sZXB2enJoMEpOdXY4dz09
+https://zoom.us/j/97189962381?pwd=YjQ1VjZqdXM2dzF4bGU3YzNLSElpZz09
 
 # MySQL DB 연동 
 <dependency>
