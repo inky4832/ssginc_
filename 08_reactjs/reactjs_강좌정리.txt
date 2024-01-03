@@ -337,11 +337,98 @@ reactjs 강좌정리
 
 14. two-way binding 방법
     - state와 input 태그 같이 사용하는 경우에 적용하는 방법이다.
+    - 반드시 onChange 에서 사용자 입력값으로 state 값을 변경하는 코드를 구현해야 된다.
+
+############################################
+  실습 src_05_useState04_input태그사용
+      src_05_useState05_실습6
+############################################
 
 
+15. useRef
+
+   1)용도
+     - 실제 DOM 접근할 때 사용
+       예) input의 focus 지정, DOM 크기 정보를 알고 싶은 경우
+     - DOM이 아닌 일반값도 저장 가능
+   
+   2) 문법
+      
+       import {useRef} from 'react';
+
+       const x = useRef();	
+
+       아이디:<input ref={x} type='text' name="userid" />
+      
+       실제 참조: x.current 지정하면 input 태그를 참조할 수 있다.
+       
+
+    3) 특징
+      - 저장 가능한 값은 DOM 및 일반 데이터이다.
+      - 값이 변경되도 state 와 다르게 화면이 재랜더링 안된다.
+        따라서 직접적으로 UI에 영향을 주지 않는다.
+
+   
+    4) 부모 컴포넌트에서 자식 컴포넌트 참조해서
+       자식의 함수 호출
+    
+       예> function App(){
+		return(
+                  <Profile ref={x} name="홍길동"/>
+		}
+            }
+
+          function Profile(){
+	  
+	     function open(){}
+	  }
 
 
+############################################
+  실습 src_06_useRef01_state로input관리한경우_매번랜더링됨
+      src_06_useRef02_ref로inpu관리한경우_매번랜더링안됨
+      src_06_useRef03_부모에서자식함수호출_forwardRef_useImperativeHandle이용
+      src_06_useRef04_modal창구현
+############################################
+
+16. Context API
+
+    1)개요
+     - 일반적으로 구현한 어플리케이션이 부모에서 자식으로 반복적으로 속성값(props)을 전달할 확률이 매우 높다.
+        prop drilling 현상이라고 부른다.
+
+    2) 해결
+      - Context API 이용
+      - 부모: createContext 이용해서 데이터 저장소에 저장.
+        자식: useContext로 데이터 사용.
 
 
+     3) 구현
+      
+         가. 부모 구현
 
+	     import {useState,createContext} from 'react';
 
+	     const UserContext = createContext(기본값);  // 변수명의 첫글자는 대문자. 컴포넌트로 사용됨.
+	     
+	     const [name, setName] = useState(기본값);
+
+	     return(
+
+               <UserContext.provider value={name}> // 전달하는 값 종류에 제한이 없다. ( 함수도 가능 )
+                 <Profile />                 // 하위인 <Profile /> 및 그 자식들에서 context값 사용 가능
+               </UserContext.provider >
+	     }
+
+	   
+	 나. 자식(들) 구현
+             import {useContext} from 'react';
+	    
+	      const username = useContext(UserContext);
+	      console.log(username);
+ 
+     4) 실습
+      
+         App ==> createContext 생성해서 값 저장
+	   - Profile
+	        - Greeting  ==> useContext 로 값 조회
