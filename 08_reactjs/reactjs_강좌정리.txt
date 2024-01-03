@@ -427,8 +427,150 @@ reactjs 강좌정리
 	      const username = useContext(UserContext);
 	      console.log(username);
  
-     4) 실습
+     4) 실습1
       
          App ==> createContext 생성해서 값 저장
 	   - Profile
 	        - Greeting  ==> useContext 로 값 조회
+
+
+        실습2
+	 
+	  App ==> [], handleAdd(){}
+	    - CartModel ==> App의 handleAdd 호출해서 값을 저장
+	         -Cart  ==> App의 [] 보여주기
+
+
+############################################
+  실습 src_07_useContext01_기본
+      src_07_useContext02_하위컴포넌트에서cart저장및출력
+      src_07_useContext02_하위컴포넌트에서cart저장및출력2_한꺼번에Context로전달
+############################################
+
+17. useReducer hook.
+
+    1) 개요
+      - useState와 동일하게 state 관리용
+      - useState 보다 체계화된 방식
+
+    2) useReducer 아키텍쳐
+
+    이벤트발생--> 액션실행(dispatch({type:'DEL'});) ---> 리듀서(reducer)  ----> state 변경후 반환 --> 화면랜더링
+
+
+       - 액션표현식: {type:'DEL'}
+                   {type:'ADD', key:value}
+
+
+     3) 구현
+
+       가. import {useReducer) from 'react';
+       나. 액션 
+           {type:'DEL'}
+	   {type:'ADD', key:value}
+
+          dispatch({type:'DEL'}) 처리
+
+    
+       다. reducer 생성
+          const resucer = (state,action)=>{
+               switch(action.type){
+		  case 'DEL': return state-1;
+		  case 'ADD': return state+1;
+	       }
+	  };
+
+       라. 리듀서 선언
+          const [num, dispatch] = useReducer(reducer, 초기값);
+
+
+      * 마지막 실습
+       Context API + useReducer 사용
+       - state는 항상 최상위에서 관리 ( lifting up state )
+       - 자식 컴포넌트에서 발생한 이벤트로 상위 컴포넌트의 상태값을 변경할 수 있다.
+         이러한 작업들이 매우 빈번하게 발생된다.
+
+       예> Redux 및 Recoil 라이브러리 제공함.
+
+
+############################################
+  실습 src_08_userReducer01_기본
+      src_08_userReducer02_state이용및배열관리
+      src_08_userReducer03_ContextAPI이용및배열관리 ==> 나중에 Redux 및 Recoil 로 변경
+############################################
+
+18. useEffect
+ 
+    1) 개요
+      - 부수효과(side effect) 기능으로서 Spring AOP 기능과 비슷
+      - 기본적으로 현재 랜더딩 사이클에 영향을 주지 않음.
+      - 예> 서버 연동, focus 지정, DOM에 동적으로 이벤트 추가 및 삭제
+
+    2) 문법
+
+        import {useEffect} from 'react';
+
+	useEffect(부수기능함수, [의존성배열]);
+
+	 ==> 앞에서 봤던 useState, useReducer등은 리턴값이 존재하지만 
+	     useEffect는 리턴값이 없음.
+
+
+     3) 특징
+        - 부수기능함수는 바로 실행되지 않음.
+	  실행시점은 App이 실행되서 랜더링후에 비동기로 부수기능함수가 실행된다.
+	  만약에 useEffect의 부수기능함수에서 state를 변경한다면 다시 랜더링 된다.
+	  이 동작을 어떻게 실행할지 정할 수 있다. ==> [의존성 배열] 이용.
+
+	  * 의존성배열
+	  a. useEffect(부수기능함수, [] ) ==> 부수기능함수는 단 한번만 호출된다.
+          b. useEffect(부수기능함수, [변수] ) ==> 변수값이 변경될 때마다  부수기능함수는 재 호출된다.
+	  c. useEffect(부수기능함수) ==> App가 재랜더링 될떄마다 매번 부수기능함수는 호출된다.
+
+     
+     4) clean up 기능 ( 옵션 )
+
+        useEffect( ()=>{ 
+	    //부가기능구현	
+
+	    return ()=>{
+	       // clean up 기능 구현
+	    };
+	 },[의존성배열]);
+
+
+         동작?
+	   - App가 실행되어 App가 모두 랜더링되고 useEffect의 부가기능이 실행된다. 맨 처음 useEffect 실행은 clean up이 실행안됨.
+           - 이후에 cleanup 실행되고 부가기능이 실행된다. ==> 부가기능이 호출직전에 호출됨.
+           - [] 빈 배열 지정하면 useEffect는 단 한번만 실행되기 때문에 clean up 호출 안됨.
+
+############################################
+  실습 src_08_useEffect01_기본
+      src_08_useEffect02_cleanup
+############################################
+
+19. 성능이슈
+
+  가. 불변객체로 만들것
+  나. memo 함수 ( 자식컴포넌트 메모이제이션 )
+    => 부모와 자식간의 props 전달시 사용됨.
+    => 자식 컴포넌트를 메모이제이션 한다. (맨 처음 생성된 자식을 재사용)
+    ==> 주요개념
+         - 부모인 App가 랜더링되면 자식인 Profile로 재랜더링된다.
+
+          기본은 App가 재랜더링되면 자식인 Profile도 재랜더링됨.
+     App -------------------------> Profile ({initial})
+
+
+       기본은 App가 재랜더링되면 자식인 Profile도 재랜더링됨.
+       동일한 props가 전달되면 자식인 Profile를 재생성할 필요가 없다.
+       이때 자식인 Profile을 memo 시킨다.
+     App -------------------------> memo(Profile ({initial}))
+
+       문법:
+           import {memo} from 'react';
+
+	    const Profile = memo( function(){} );
+            const Profile = memo( ()=>{} );
+
+	  memo 함수안에 지정된 함수는 일반함수가 아닌 컴포턴트 함수이다.
