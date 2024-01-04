@@ -687,3 +687,217 @@ reactjs 강좌정리
    다. new FormData(event.target)
 
    라. 유효성 검사 ( blur 시점:포커스 잃어버린 시점 )
+
+ ############################################
+  실습 src_10_form데이터처리1_state이용
+      src_10_form데이터처리2_ref이용
+      src_10_form데이터처리3_FormData객체이용
+      src_10_form데이터처리4_blur시점에유효성체크
+############################################
+21. 서버 연동 - 1
+
+  1) http 요청 방법
+     - 자바스크립트내의 fetch 함수
+     - 외부 라이브러리의 axios 함수 ( npm install axios )
+
+  2) 구현 방법
+
+    가. http.js 파일 생성
+       - 서버연동 코드를 함수로 작성해서 필요시 import 하고 함수호출 형식으로 사용.
+       - 비동기처리: async/await
+       - 실습서버: http://reqres.in
+
+ 
+	  export async function fetchUserList(){
+			
+		const response = await fetch(" https://reqres.in/api/users?page=2");
+		const resData = await response.json();
+		
+		return resData.data;
+	  }
+
+           export async function insertUser(){
+
+	   }
+	   ...
+
+      나. App에서 호출하는 방법
+
+          a. App가 처음 로딩될 때
+	     - useEffect로 구현한다.	
+
+
+	  b. 사용자 이벤트 발생할 때
+	     - http.js 파일 import 받고 함수 호출해서 사용하면 된다.
+	     - useEffect 사용불가
+
+	     예> export function Profile(){
+
+		   function handleEvent(){
+		     //서버연동
+		     //useEffect(); 에러발생. 최상위에서만 사용 가능
+		   }
+
+		   return(
+		      <button onClick={handleEvent}>서버에저장
+		   );
+	         }
+
+
+21. 서버 연동 - 2
+
+    가. 로딩 페이지 처리
+       
+    나. 에러 처리
+    
+       - Error.js 파일 작성
+       export default function Error({title, message}){
+
+           return(
+	   <>
+		<h4>{title}</h4>
+		<p>{message}</p>
+	   </>	
+	   )
+	}
+
+	- http.js에서 예외발생시 예외처리
+ 
+     다. 삭제시 Modal로 confirm 받기
+
+        - 모달기능의 Box.js 작성하기
+ ############################################
+  실습 src_11_서버연동01_fetch기본
+      src_11_서버연동02_isFetching_로딩페이지제공
+      src_11_서버연동03_예외처리
+      src_11_서버연동04_삭제확인용_모달사용
+############################################
+##################################
+22. 라우팅 (******)
+
+  가. 홈페이지
+    http://reactrouter.com/
+ 
+  나. 환경설정
+     
+     - npm install react-router-dom
+
+   
+  다. 작업순서
+
+    a. Home.js 만들기
+      export default  function Home() {
+	  return (
+	    <div>
+	       <h2>Home 화면</h2>
+	    </div>
+	  );
+	}
+
+    b. App.js에서 routing 기능 사용하도록 설정
+
+        import {createBrowserRouter,  RouterProvider} from 'react-router-dom';
+	import Home from './components/Home';
+	   //라우팅 기능
+	   const router = createBrowserRouter([
+	    {path:"/", element: <Home />}
+	   ]);
+	function App() {
+	  return <RouterProvider router={router}/>
+	}
+	export default App;
+
+    c. Products.js 작성
+    d. App.js에서 routing 추가
+         //라우팅 기능
+	   const router = createBrowserRouter([
+	    {path:"/", element: <Home />},
+	    {path:"/products", element: <Products /> },
+
+	   ]);
+
+     e. Home.js 에서 Products.js 로 링크 연결
+
+        import { Link } from "react-router-dom";
+         <h2>Home 화면</h2>
+         <Link to="/products">products가기</Link>
+
+ ############################################
+  실습 src_12_Routing01_기본
+      src_12_Routing02_Products추가밍Link연결
+############################################
+
+     f. 메뉴 링크 만들기
+
+	      - MainNavigation.js
+	       export default function MainNavigation() {
+		  return (
+		    <div>
+		       <Link to="/">Home</Link><br/>
+		       <Link to="/products">products</Link>
+		    </div>
+		  );
+		}
+
+              - pages/Root.js
+		 import { Outlet } from "react-router-dom";
+		import MainNavigation from "./MainNavigation";
+
+
+		export default function RootLayout() {
+		  return (
+		    <div>
+			<MainNavigation />
+			<hr/>
+			<Outlet />
+		    </div>
+		  );
+		}
+
+		- App.js 수정
+		//라우팅 기능
+		   const router = createBrowserRouter([
+		      {path:"/", 
+		       element: <RootLayout />,
+		       children:[
+			{path:"", element: <Home />},
+			{path:"products", element: <Products /> }
+		       ]}
+		   ]);
+
+
+ ############################################
+  실습
+	src_12_Routing03_메뉴역할의RootLayut작성_Outlet
+ ############################################
+   g. 예외처리 - 404 발생등..
+
+      - ErrorPage.js 작성
+
+        function ErrorPage() {
+	  return (
+	    <div>
+	      <h2>예외발생</h2>
+	      <p>존재하지 않는 페이지입니다.</p>
+	    </div>
+	  );
+	}
+
+	export default ErrorPage;
+
+     - App.js 에서 에러발생시 보여줄 컴포넌트 지정
+           //라우팅 기능
+	   const router = createBrowserRouter([
+	      {path:"/", 
+	       element: <RootLayout />,
+	errorElement:<ErrorPage />,
+	       children:[
+		{path:"", element: <Home />},
+		{path:"products", element: <Products /> }
+	       ]}
+	   ]);
+
+ ############################################
+  실습
+	src_12_Routing04_예외처리_404_errorElement이용
+ ############################################
