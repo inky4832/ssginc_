@@ -574,3 +574,116 @@ reactjs 강좌정리
             const Profile = memo( ()=>{} );
 
 	  memo 함수안에 지정된 함수는 일반함수가 아닌 컴포턴트 함수이다.
+
+     다. useMemo 함수 
+
+       - 복잡한 연산의 동일한 실행결과를 가진 함수를 메모이제이션 한다.
+
+       - 문법:
+
+	   import {useMemo} from 'react';
+ 
+           // useMemo 적용 안한 형태
+	   const complexFun = ()=>{ };	
+	   ==> complexFun 은 함수이다. 그래서 사용할 때 complexFun() 지정.
+
+           // useMemo 적용한 형태		
+           const complexFun = useMemo(()=>{ },[]);
+	   const complexFun = useMemo(function(){ },[]);
+	   ==> complexFun 은 함수가 아님.
+	       complexFun 은 실행함수가 반환한 값을 저장하는 변수이다.
+	       그래서 사용할 때 complexFun 지정.
+
+	   ==> [] 빈배열 지정하면 단 한번만 실행
+	       [변수] 변수값이 변경되었을 경우에만 실행
+	       [] 지정하지 않으면 매번 실행.
+
+
+      라. useCallback 함수
+         
+	 - 컴포넌트가 재랜더링되면 내부적으로 사용하는 함수가 재생성된다.
+	   매번 생성되는 함수를 재생성하지 않게 방지하는 방법이다.
+
+          - 문법:
+
+	   import {useCallback} from 'react';
+    
+           const xxx = useCallback(()=>{ },[]);
+	    ==> xxx 는 함수이다.	
+	
+
+	useMemo는 복잡한 함수의 결과값을 메모이제이션 한다.
+        useCallback는 함수 생성을 방지하기 위해 메모이제이션 한다.
+
+
+     마. key 중요성
+       ==> react는 기본적으로 순서로 비교한다.
+
+        a. key 없는 경우1 - 순서가 일치하는 경우
+
+	  //현재
+	   <ul>
+             <li>사과
+	     <li>배
+	   </ul>
+
+          //재 랜덩
+	   <ul>
+             <li>사과
+	     <li>배
+	     <li>수박
+	   </ul>
+         ==> 마지막 <li>수박만 새로 생성됨.
+
+         a. key 없는 경우2 - 순서가 다른 경우
+	  
+	    //현재
+	   <ul>
+             <li>사과
+	     <li>배
+	   </ul>
+
+          //재 랜덩
+	   <ul>
+	     <li>수박
+             <li>사과
+	     <li>배
+	    
+	   </ul>
+
+         ==> 전체 <li> 모두 새로 생성됨
+
+	  b. key 있는 경우 
+	  ==> react는 기본적으로 순서로 비교한다.
+	      key로 비교한다.
+	  
+	    //현재
+	   <ul>
+             <li key="a">사과
+	     <li key="b">배
+	   </ul>
+
+          //재 랜덩
+	   <ul>
+	     <li key="c">수박
+             <li key="a">사과
+	     <li key="b">배
+	   </ul>
+         ==>  <li key="c">수박만 새로 생성됨.
+
+
+    결론은 key={idx} 권장안함. 이유는 idx가 변경 가능하기 때문이다.
+         진짜로 unique한 값 지정을 권장함.
+
+############################################
+  실습 src_09_성능이슈1_memo함수_자식컴포넌트재사용기법.zip
+      src_09_성능이슈2_useMemo_사용안한경우_복잡한함수가매번호출됨
+      src_09_성능이슈2_useMemo2_적용한경우_복잡한함수의결과값재사용
+############################################
+20. form 태그
+
+   가. state 이용
+   나. ref이용
+   다. new FormData(event.target)
+
+   라. 유효성 검사 ( blur 시점:포커스 잃어버린 시점 )
