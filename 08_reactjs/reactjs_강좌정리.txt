@@ -1086,3 +1086,125 @@ reactjs 강좌정리
   실습
 	src_12_Routing09_loader함수4_개별컴포넌트에서loader함수구현하고export해서사용
 ############################################
+
+    m. loader() 함수에서 예외처리
+
+        가. 
+	   import { json } from "react-router-dom";
+	   async function loader(){
+	       ......
+	        const response  = ~
+
+		//예외처리
+		if( !response.ok ){
+	           //throw new Error("fetchUserList 요청 실패"); ---> App.js에서 catch하고 error state저장--> ErroPage에 최종전달해서 출력		
+		   throw json(
+                       {message:"error입니다"},
+		       {status: 500}           ==>    errorElement:<ErrorPage />에서 직접 받음
+		    );
+		}
+           
+		return 결과값;
+	    }
+
+
+	 나. errorElement:<ErrorPage /> 예외처리
+	   
+	      - useRouterError() 예외정보를 참조가 가능하다.
+
+############################################
+  실습
+	src_12_Routing09_loader함수5_loader함수_예외처리_throw_json_ErrorPage
+
+############################################
+
+     n. isFetching 역할 ==> useNavigation() 이용
+
+      문법:
+
+          import {useNavigation} from 'react-router-dom'
+
+	  const navigation = useNavigation();
+
+	  navigation.state="idle|loading|submmiting";
+
+
+	  사용:
+	       {navigation.state==='loading' && <p>loading 중입니다.</p>
+
+############################################
+  실습
+   src_12_Routing09_loader함수6_useNavigation활용한사용자요청피드백제공
+############################################ 
+
+    o. action() 함수 이용한 폼 데이터 전송하기
+     - 주의할점은 반드시 <Form> 를 사용해야 된다.
+           <form method="post">  ==> html의 form 태그
+	   <Form mehotd="post">  ==> Reactj의 Form 컴포넌트
+
+
+############################################
+  실습
+	src_12_Routing10_action1_기본
+
+############################################
+
+   p. action() 함수의 예외처리
+
+      가. 이전에 했던 방식인 loader와 동일
+
+          - //예외처리
+	  if(!response.ok){ // 원래는 !response.ok 임
+	     throw json(
+		{message:"UsersLoader 요청시 예외발생"},
+		{status: 500}
+	     );
+	  }
+
+          - errorElement:<ErrorPage /> 처리
+
+
+      나.  reponse 자체를 반환
+
+           //예외처리
+	   if(!response.ok){
+	       return response;	 // action을 수행하는 컴포넌트(NewUserPage)갑 예외를 처리할 수 있다.	
+	   }
+
+          // 예외정보를 얻기
+           NewUserPage에서는  useActionData() 사용하여 예외처리를 할 수 있다.
+	      
+	      const actionData = useActionData();
+
+
+	      {actionData && <p>폼데이터 다시 입력하세요</p>}
+
+############################################
+  실습
+     src_12_Routing10_action2_예외처리
+############################################
+
+    q. 서버인증 (session,token)
+     - token 이용 ? https://velopert.com/2350
+
+
+     클라이언트       1)회원가입           서버           2)회원저장    DB 서버
+     (reactjs)  _----------->    (spring boot )   ------------> (mysql) 3) email:aaa@naver.com 저장
+
+                    4)로그인                          5)인증
+		    email:
+		    aaa@naver.com             
+                 ------------>                     -------------->
+
+		                   7)암호화된문자열생성    <--------------
+					(토큰)	      6) 인증완료
+                    8)토큰 응답
+		 <-------------
+
+     클라이언트
+   9)토큰저장
+    (localStorage저장)
+                    10) 로그인이후작업요청 ---->token유효성체크(유효? 요청작업진행
+		        +token전송                        유효하지않으면? 예외발생시킴
+		     예>장바구니,mypage
+                   ----------------->
