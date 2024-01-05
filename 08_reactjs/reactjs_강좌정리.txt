@@ -901,3 +901,121 @@ reactjs 강좌정리
   실습
 	src_12_Routing04_예외처리_404_errorElement이용
  ############################################
+
+     h. 링크버튼에 활성화 피드백 설정하기
+
+       - 현재사용중인 <Link>는 클릭시 피드백이 없음. 따라서 어떤 링크를 클릭했는지 사용자는 모름.
+       - <NavLink> 사용하면 자동으로  클릭시 clasName={} 에 isActive 속성이 전달됨.
+         따라서 isActive 활용하면 CSS 적용이 가능하여 피드백 제공이 가능하다.
+
+	가. MainNavigation.module.css
+
+	   .menu{
+	      color:red;
+	      text-decoration:underline;
+            } 
+
+         나. MainNavigation.js
+	   
+	   import { NavLink } from "react-router-dom";
+	   import  classes  from './MainNavigation.module.css';
+           export default function MainNavigation() {
+		  return (
+		    <div>
+		       <NavLink to="/"
+			 className={({isActive})=>isActive?classes.menu:undefined}>
+			  Home
+			</NavLink><br/>
+ ############################################
+  실습
+	src_12_Routing05_메뉴링크활성화_피드백제공_NavLink이용
+ ############################################
+
+   i.  프로그래밍 이용한 라우팅 처리
+
+     - useNavigate() 이용
+
+     구현방법
+        import { useNavigate ) from 'react-router-dom'
+
+	const navigate = useNavigate();
+
+	 function handleEvent(){
+	     navigate(타겟);
+	 }
+ ############################################
+  실습
+	src_12_Routing06_프로그래밍이용한링크처리_useNavigate	
+
+ ############################################
+
+    j. 동적쿼리 ( 동적 라우팅 )
+
+    - 다른 컴포넌트로 임의의 파라미터 전달하는 방법
+
+        가. PathVariable 방식
+	  
+	   Product.js  -------------------> ProductDetail.js
+	   (p1,p2,p3)
+
+	   /products/:p_id                const params = useParams()
+           예>   /products/p1              parasm.p_id 
+                 /products/p2
+
+
+	나. Query String 방식
+     
+            Product.js  -------------------> ProductDetail.js
+	   (p1,p2,p3)
+
+	   /products/?p_id=p1               const [params] = useSearchParams();
+					    const prod_id = params.get("prod_id");
+
+
+ ############################################
+  실습
+	src_12_Routing07_동적라우팅1_PathVairable방식_useParams
+	src_12_Routing07_동적라우팅2_Querystring방식_useSeachParams
+ ############################################
+
+    k. 상대경로
+
+      - 절대경로:  <Link to="/타겟">
+      - 상대경로:  <Link to="./타겟" relatvie="route"> 기본동작
+                 <Link to=".."    relatvie="path">
+
+         App.js 라우팅                         ProductDetail.js
+         /products/p1  -------------------->  <Link to=".." relative="route"> 뒤로
+	 /           <-------------------  
+		                              App.js에서 설정된 라우트가 /products/:prid_Id 로 지정됨(하나로 처리)
+
+	 App.js 라우팅                         ProductDetail.js
+         /products/p1  -------------------->  <Link to=".." relative="path"> 뒤로
+	 /products      <-------------------  
+		                              App.js에서 설정된 라우트가 /products/:prid_Id 로 지정됨(두개로 처리)
+
+
+
+ ############################################
+  실습
+	src_12_Routing08_상대경로_relatvie_route또는path
+ ############################################
+
+     l. loader() 이용한 데이터 fetch (서버연동, 로컬데이터 연동)
+		
+	- element로 지정된 컴포넌트(UsersPage)가 생성되기 전에 실행됨.
+	  따라서 loader()함수가 먼저 실행되어 데이터를 fetch한후에 나중에 생성된 컴포넌트(UsersPage)에서 사용이 가능하도록 지원.
+
+       가. 문법
+          {path:"users", 
+	   element: <UsersPage />,
+	   loader: async function(){서버연동,}},
+         
+       나. loader()함수가 반환된 데이터 사용방법
+
+            - useLoaderData() 이용
+
+############################################
+  실습
+	src_12_Routing09_loader함수1_기본
+############################################
