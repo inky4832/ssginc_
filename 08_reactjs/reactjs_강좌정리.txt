@@ -1186,8 +1186,10 @@ reactjs 강좌정리
 
     q. 서버인증 (session,token)
      - token 이용 ? https://velopert.com/2350
+       cors 이용? 요청하는 클라이언트와 서버의 URL이 다르면 기본적으로 ajax 통신이 안됨.
 
 
+       3000                           8090
      클라이언트       1)회원가입           서버           2)회원저장    DB 서버
      (reactjs)  _----------->    (spring boot )   ------------> (mysql) 3) email:aaa@naver.com 저장
 
@@ -1208,3 +1210,191 @@ reactjs 강좌정리
 		        +token전송                        유효하지않으면? 예외발생시킴
 		     예>장바구니,mypage
                    ----------------->
+
+######################################################
+SpringBoot 소스 분석
+ 
+ 1. 의존성
+ <dependency>
+	<groupId>io.jsonwebtoken</groupId>
+	<artifactId>jjwt</artifactId>
+	<version>0.9.1</version>
+</dependency>
+
+<!-- 아래 의존성은 JDK 11 버전에서 필요 )
+<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-impl</artifactId>
+    <version>4.0.1</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core -->
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-core</artifactId>
+    <version>4.0.1</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>
+
+2.  token 설정정보
+  예> 시간, 암호화할때 추가로 salt
+
+  - application.properties
+
+       # 토큰 유효 기간 ( 2 min후에 만료됨 )
+	jwt.expmin=2
+	# 토큰 생성에 사용할 salt
+	jwt.salt=KYUNGYEOLIN
+
+3. token 생성 및 검증
+ 
+   com.exam.jwt.JwtUtil.java 작성
+
+    토큰생성: ublic String create(String email, String subject, long expireMin)
+    토큰검증: public Map<String, Object> checkAndGetClaims(String jwt){	
+
+
+4. Controller 호출전에 token 검증 작업 - HandlerInterceptor
+
+    - JwtInterceptor.java 
+
+     // reactjs에서 서버에 요청할 때 jwtAuthToken=토큰값 을 header에 담아서 요청
+     
+    // request의 헤더에서 jwtAuthToken 으로 넘어온 정보 조회
+		String authToken = request.getHeader("jwtAuthToken");
+
+     // 유효한 토큰이면 진행, 아니면 예외 발생
+	if(authToken != null ) {
+		  Map<String, Object> map = jwtUtil.checkAndGetClaims(authToken);
+		  System.out.println("유효한 토큰임:" + map);
+		 return true; // Controller로 요청됨
+	}else {
+		throw new Exception("요청하신 토큰이 유효하지 않습니다.");
+	}
+
+    - 어떻게 요청하면 JwtInterceptor 실행여부 설정
+       WebMvcConfig.java
+
+     @Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(jwtInterceptor)
+		        .addPathPatterns("/api/**") // 기본 적용 경로
+		        .excludePathPatterns(Arrays.asList("/api/user/**"));// 적용 제외 경로
+	}
+        // 기본적으로 URL 이 다르기 때문에 접근불가능 ---> 허용해줌
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		
+		registry.addMapping("/**")
+				.allowedOriginPatterns("*")
+				.allowedHeaders("*")
+				.allowCredentials(false)
+				.allowedMethods("*");
+	}
+
+	==> /api/user/signup  ==> JwtInterceptor 안걸림
+	    /api/user/login   ==> JwtInterceptor 안걸림
+
+	    /mypage   ==> JwtInterceptor 걸림
+
+
+5. 로그인 성공시 token 생성하고 클라이언트에 응답하는 코드
+
+    CustomerController.java
+    @PostMapping("/user/login")
+	public Map<String, Object> login(@RequestBody Customer c, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		System.out.println("Customer>>>>>>>>>" + c);
+		
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Customer loginUser = userService.login(c);  // Service클래스에서 실제 토큰 생성
+		
+// 생성된 토큰 정보를 클라이언트에게 전달한다.
+resultMap.put("jwtAuthToken", loginUser.getAuthToken());
+response.addHeader("jwtAuthTokenn", loginUser.getAuthToken());
+		
+// 실제로는 필요없으나 확인차 클라이언트로 정보 제공
+Map<String, Object> info = jwtService.checkAndGetClaims(loginUser.getAuthToken());
+resultMap.putAll(info);
+
+		return resultMap;
+	}
+
+	// CustomerServiceImple 에서 실제 토큰을 생성하고 Customer 저장후 반환
+	@Override
+	public Customer login(Customer customer) throws Exception {	
+		Customer c = resposity.login(customer);
+		
+		if(c != null) {
+//인증 성공시 authToken 생성
+String authToken = jwtUtil.createAuthToken(c.getEmail());
+c.setAuthToken(authToken);
+			return c;
+		}else {
+			throw new RuntimeException("인증 실패");
+		}
+	}//
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+Reactjs
+
+ 1. Authetication.js
+
+      await fetch('http://localhost:8090/api/user/'+mode , {  ==> Boot의 CustomerController 의 맵핑과 일치
+
+
+// 다음 코드가 CustomerController에서 response.addHeader("jwtAuthTokenn", loginUser.getAuthToken()); 해준
+    header값을 얻어서 localStorage에 저장함.
+
+        const resData = await response.json();
+  console.log("resData>>>>>>", resData);
+
+  const token = resData.jwtAuthToken;
+  localStorage.setItem('jwtAuthToken', token);
+  localStorage.setItem('email', authData.email);
+
+ 2. 로그인 이후 요청 ( /mypage , /logout )
+
+  MyPagePage.js
+
+    export async function loader({ request }) {
+      console.log("MyPagePage,loader>>>>>>>>>>>>.",request)
+ const token = getAuthToken();
+      const email = localStorage.getItem("email");
+      console.log("token:", token);
+      console.log("email:" , email);
+      const authData = {
+        email: email
+      }
+      const response = await fetch("http://localhost:8090/api/mypage/", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+ 'jwtAuthToken': token
+          },
+          body: JSON.stringify(authData),
+        });
+
+ 3) MainNavigation.js
+      
+   token 존재확인 auth 보여줄지 또는 logout/mypage 결정
+
+
+  4) logout
+   --> token 으로 인증하기 때문에 서버에 삭제할 데이터는 없다.
+     단지 localStorage에 저장된 token값을 삭제하면된다.
+
+  //Logout.js
+
+     import { redirect } from 'react-router-dom';
+
+	export function action() {
+	  localStorage.removeItem('jwtAuthToken');
+	  return redirect('/');
+	}
