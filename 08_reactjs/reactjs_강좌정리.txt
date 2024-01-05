@@ -1001,10 +1001,12 @@ reactjs 강좌정리
 	src_12_Routing08_상대경로_relatvie_route또는path
  ############################################
 
-     l. loader() 이용한 데이터 fetch (서버연동, 로컬데이터 연동)
+     l. loader() 이용한 데이터 fetch 1 (서버연동, 로컬데이터 연동)
 		
 	- element로 지정된 컴포넌트(UsersPage)가 생성되기 전에 실행됨.
-	  따라서 loader()함수가 먼저 실행되어 데이터를 fetch한후에 나중에 생성된 컴포넌트(UsersPage)에서 사용이 가능하도록 지원.
+	  따라서 loader()함수가 먼저 실행되어 데이터를 fetch한후에 나중에
+	  생성된 컴포넌트(UsersPage)에서 사용이 가능하도록 지원.
+        - loader 데이터는 지정된 컴포넌트(UsersPage) 하위 컴포넌트에서 사용 
 
        가. 문법
           {path:"users", 
@@ -1018,4 +1020,69 @@ reactjs 강좌정리
 ############################################
   실습
 	src_12_Routing09_loader함수1_기본
+	src_12_Routing09_loader함수2_자손에서loader데이터사용가능
+############################################
+
+    l. loader() 이용한 데이터 fetch 2
+      ==> id="root" 로 지정하고 사용시 useRouteLoaderData("id값) 사용한다.
+
+       //라우팅 기능
+   const router = createBrowserRouter([
+      {path:"/", 
+       element: <RootLayout />,
+       id:"root",   ==> 사용하고자 컴포넌트에서는 useRouteLoaderData("id값) 사용한다.
+       loader: async function(){
+            console.log("UsersPage.loader");
+
+            const response = await fetch(" https://reqres.in/api/users?page=1");
+            const resData = await response.json();
+            
+            return resData.data;
+
+         },
+       errorElement:<ErrorPage />,
+       children:[
+        {path:"", element: <Home />},
+	 
+	 {path:"users", 
+         element: <UsersPage />,  =======> 그냥 useLoaderData() 사용하면 page=2 loader 데이터 사용함.
+	                                       useRouteLoaderData("root") page=1  loader 데이터 사용함.
+         loader: async function(){
+            console.log("UsersPage.loader");
+
+            const response = await fetch(" https://reqres.in/api/users?page=2");
+            const resData = await response.json();
+            
+            return resData.data;
+
+         }},
+
+############################################
+  실습
+	src_12_Routing09_loader함수3_id이용_useRouteLoaderData()함수이용
+############################################
+
+   l. loader() 이용한 데이터 fetch3
+
+     - 현재 App.js의 element마다 추가된 loader: async functio(){} 에서
+       async functio(){} 를 외부마다 저장한 후 import해서 사용하자.
+     - 외부파일은 element에 지정된 컴포넌트에 저장한다.
+
+
+      // 현재 상황
+       {path:"users", 
+            element: <UsersPage />,
+            loader: async function(){
+               console.log("UsersPage.loader");
+
+               const response = await fetch(" https://reqres.in/api/users?page=2");
+               const resData = await response.json();
+               
+               return resData.data;
+
+            }},
+         ]}
+############################################
+  실습
+	src_12_Routing09_loader함수4_개별컴포넌트에서loader함수구현하고export해서사용
 ############################################
